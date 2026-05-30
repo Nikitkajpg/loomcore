@@ -1,4 +1,4 @@
-package com.njpg.loomcore.ui.screen
+package com.njpg.loomcore.ui.screen.tabs
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

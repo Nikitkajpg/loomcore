@@ -31,7 +31,7 @@ class ClientsViewModel : ViewModel() {
     }
 
     fun delete(id: Int) {
-        _clients.update { it.filter { c -> c.id != id } }
+        _clients.update { list -> list.filter { it.id != id } }
         repo.saveAll(_clients.value)
     }
 

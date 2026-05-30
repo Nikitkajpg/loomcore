@@ -23,9 +23,11 @@ object Paths {
     val imgDir: Path by lazy { dataDir.resolve("img").also { it.createDirectories() } }
 
     val settingsFile: Path by lazy { settingsDir.resolve("settings.properties") }
+    val profileFile: Path by lazy { dbDir.resolve("profile.json") }
     val productsFile: Path by lazy { dbDir.resolve("products.json") }
     val suppliersFile: Path by lazy { dbDir.resolve("suppliers.json") }
     val clientsFile: Path by lazy { dbDir.resolve("clients.json") }
+    val materialsFile: Path by lazy { dbDir.resolve("materials.json") }
 
     private fun resolveAppDir(jarPath: Path): Path {
         var dir = if (jarPath.toFile().isFile) jarPath.parent else jarPath

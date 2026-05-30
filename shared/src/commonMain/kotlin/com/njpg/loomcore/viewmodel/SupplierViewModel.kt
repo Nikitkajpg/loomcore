@@ -31,7 +31,7 @@ class SuppliersViewModel : ViewModel() {
     }
 
     fun delete(id: Int) {
-        _suppliers.update { it.filter { s -> s.id != id } }
+        _suppliers.update { list -> list.filter { it.id != id } }
         repo.saveAll(_suppliers.value)
     }
 

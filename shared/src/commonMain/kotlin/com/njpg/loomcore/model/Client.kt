@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Client(
-    val id: Int, val name: String, val contact: String = "", val notes: String = ""
+    val id: Int, val name: String, val phoneNumber: String = "", val url: String = "", val notes: String = ""
 )

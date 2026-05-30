@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
@@ -32,14 +34,20 @@ fun SplashScreen(onFinished: () -> Unit) {
     }
 
     Box(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
         Text(
             text = "LoomCore",
             fontSize = 48.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.scale(scale.value).graphicsLayer { this.alpha = alpha.value })
+            modifier = Modifier.align(Alignment.Center).scale(scale.value).graphicsLayer { this.alpha = alpha.value })
+
+        Text(
+            text = "Developed by NJPG",
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 32.dp)
+        )
     }
 }

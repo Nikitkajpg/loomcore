@@ -13,7 +13,7 @@ import java.nio.file.Path
 class ProductsViewModel : ViewModel() {
 
     private val repo = JsonRepository(
-        Paths.productsFile, Product.serializer(), getId = { it.id })
+        file = Paths.productsFile, serializer = Product.serializer(), getId = { it.id })
 
     private val _products = MutableStateFlow<List<Product>>(emptyList())
     val products = _products.asStateFlow()
@@ -22,25 +22,25 @@ class ProductsViewModel : ViewModel() {
         _products.value = repo.loadAll()
     }
 
-    fun add(unit: Product) {
-        _products.update { it + unit }
+    fun add(product: Product) {
+        _products.update { it + product }
         repo.saveAll(_products.value)
     }
 
-    fun update(unit: Product) {
-        _products.update { list -> list.map { if (it.id == unit.id) unit else it } }
+    fun update(product: Product) {
+        _products.update { list -> list.map { if (it.id == product.id) product else it } }
         repo.saveAll(_products.value)
     }
 
     fun delete(id: Int) {
-        _products.update { it.filter { u -> u.id != id } }
+        _products.update { list -> list.filter { it.id != id } }
         repo.saveAll(_products.value)
     }
 
-    fun importPhoto(unitId: Int, source: Path) {
+    fun importPhoto(productId: Int, source: Path) {
+        val product = _products.value.find { it.id == productId } ?: return
         val fileName = ImageStorage.importPhoto(source)
-        val unit = _products.value.find { it.id == unitId } ?: return
-        update(unit.copy(photoPath = fileName))
+        update(product.copy(photoPath = fileName))
     }
 
     fun nextId(): Int = repo.nextId(_products.value)

@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ContactCard(
-    name: String, contact: String, notes: String, onEdit: () -> Unit, onDelete: () -> Unit
+fun PartnerCard(
+    name: String, lines: List<String>, onEdit: () -> Unit, onDelete: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -25,20 +25,27 @@ fun ContactCard(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Column(
+                modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
                 Text(name, style = MaterialTheme.typography.titleMedium)
-                if (contact.isNotBlank()) Text(contact, style = MaterialTheme.typography.bodySmall)
-                if (notes.isNotBlank()) Text(
-                    notes,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                lines.forEach { line ->
+                    if (line.isNotBlank()) {
+                        Text(
+                            text = line,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
             }
             IconButton(onClick = onEdit) {
                 Icon(Icons.Default.Edit, contentDescription = "Редактировать")
             }
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Удалить", tint = MaterialTheme.colorScheme.error)
+                Icon(
+                    Icons.Default.Delete, contentDescription = "Удалить", tint = MaterialTheme.colorScheme.error
+                )
             }
         }
     }

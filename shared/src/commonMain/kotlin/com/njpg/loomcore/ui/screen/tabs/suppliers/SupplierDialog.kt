@@ -1,4 +1,4 @@
-package com.njpg.loomcore.ui.components
+package com.njpg.loomcore.ui.screen.tabs.suppliers
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,14 +10,15 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.njpg.loomcore.model.Supplier
 
 
 @Composable
-fun ContactDialog(
-    title: String, initial: ContactDraft?, nextId: Int, onConfirm: (ContactDraft) -> Unit, onDismiss: () -> Unit
+fun SupplierDialog(
+    title: String, initial: Supplier?, nextId: Int, onConfirm: (Supplier) -> Unit, onDismiss: () -> Unit
 ) {
     var name by remember { mutableStateOf(initial?.name ?: "") }
-    var contact by remember { mutableStateOf(initial?.contact ?: "") }
+    var url by remember { mutableStateOf(initial?.url ?: "") }
     var notes by remember { mutableStateOf(initial?.notes ?: "") }
 
     AlertDialog(onDismissRequest = onDismiss, title = { Text(title) }, text = {
@@ -30,9 +31,9 @@ fun ContactDialog(
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
-                value = contact,
-                onValueChange = { contact = it },
-                label = { Text("Контакт") },
+                value = url,
+                onValueChange = { url = it },
+                label = { Text("Ссылка") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -46,7 +47,11 @@ fun ContactDialog(
         }
     }, confirmButton = {
         TextButton(onClick = {
-            onConfirm(ContactDraft(initial?.id ?: nextId, name.trim(), contact.trim(), notes.trim()))
+            onConfirm(
+                Supplier(
+                    id = initial?.id ?: nextId, name = name.trim(), url = url.trim(), notes = notes.trim()
+                )
+            )
         }) { Text("Сохранить") }
     }, dismissButton = {
         TextButton(onClick = onDismiss) { Text("Отмена") }

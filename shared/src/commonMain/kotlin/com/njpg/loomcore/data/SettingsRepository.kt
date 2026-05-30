@@ -7,23 +7,26 @@ import kotlin.io.path.writer
 
 object SettingsRepository {
 
-    private val file = Paths.settingsFile
+    private var cache: Properties? = null
 
-    fun load(): Properties {
-        val props = Properties()
-        if (file.exists()) file.reader(Charsets.UTF_8).use { props.load(it) }
-        return props
+    private fun properties(): Properties {
+        return cache ?: Properties().also { props ->
+            val file = Paths.settingsFile
+            if (file.exists()) file.reader(Charsets.UTF_8).use { props.load(it) }
+            cache = props
+        }
     }
 
-    fun save(props: Properties) {
-        file.writer(Charsets.UTF_8).use { props.store(it, "LoomCore Settings") }
-    }
-
-    fun get(key: String, default: String = ""): String = load().getProperty(key, default)
+    fun get(key: String, default: String = ""): String = properties().getProperty(key, default)
 
     fun set(key: String, value: String) {
-        val props = load()
-        props.setProperty(key, value)
-        save(props)
+        properties().setProperty(key, value)
+        flush()
+    }
+
+    fun flush() {
+        Paths.settingsFile.writer(Charsets.UTF_8).use {
+            properties().store(it, "LoomCore Settings")
+        }
     }
 }

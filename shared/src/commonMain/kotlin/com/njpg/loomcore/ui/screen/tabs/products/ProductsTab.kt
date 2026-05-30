@@ -1,0 +1,61 @@
+package com.njpg.loomcore.ui.screen.tabs.products
+
+import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.*
+import com.njpg.loomcore.model.Product
+import com.njpg.loomcore.ui.screen.tabs.TabScaffold
+import com.njpg.loomcore.viewmodel.ClientsViewModel
+import com.njpg.loomcore.viewmodel.MaterialsViewModel
+import com.njpg.loomcore.viewmodel.ProductsViewModel
+import com.njpg.loomcore.viewmodel.ProfileViewModel
+
+@Composable
+fun ProductsTab(
+    vm: ProductsViewModel, materialsVm: MaterialsViewModel, clientsVm: ClientsViewModel, profileVm: ProfileViewModel
+) {
+    val products by vm.products.collectAsState()
+    val materials by materialsVm.materials.collectAsState()
+    val clients by clientsVm.clients.collectAsState()
+    val profile by profileVm.profile.collectAsState()
+
+    var showDialog by remember { mutableStateOf(false) }
+    var editTarget by remember { mutableStateOf<Product?>(null) }
+
+    fun openDialog(target: Product?) {
+        editTarget = target; showDialog = true
+    }
+
+    fun closeDialog() {
+        editTarget = null; showDialog = false
+    }
+
+    if (showDialog) {
+        ProductDialog(
+            initial = editTarget,
+            nextId = vm.nextId(),
+            allMaterials = materials,
+            allClients = clients,
+            profile = profile,
+            onConfirm = { product ->
+                if (editTarget == null) vm.add(product) else vm.update(product)
+                closeDialog()
+            },
+            onDismiss = { closeDialog() })
+    }
+
+    TabScaffold(
+        isEmpty = products.isEmpty(),
+        emptyText = "Нет изделий. Нажмите + чтобы добавить.",
+        onAdd = { openDialog(null) }) {
+        items(products, key = { it.id }) { product ->
+            ProductCard(
+                product = product,
+                allMaterials = materials,
+                allClients = clients,
+                currency = profile.defaultCurrency,
+                onEdit = { openDialog(product) },
+                onDelete = { vm.delete(product.id) },
+                onPickPhoto = { vm.importPhoto(product.id, it.toPath()) })
+        }
+    }
+}
