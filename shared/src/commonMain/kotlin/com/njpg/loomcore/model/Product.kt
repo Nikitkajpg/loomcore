@@ -15,6 +15,6 @@ data class Product(
     val cachedCost: Double = 0.0,
     /** Итоговая цена */
     val finalPrice: Double = 0.0,
-    val photoPath: String? = null,
+    val photoPaths: List<String> = emptyList(),
     val notes: String = ""
 )

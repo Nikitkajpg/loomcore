@@ -20,13 +20,9 @@ fun ProfileTab(vm: ProfileViewModel) {
     var markupPercent by remember(profile) { mutableStateOf(profile.markupPercent.toString()) }
     var hourlyRate by remember(profile) { mutableStateOf(profile.hourlyRate.toString()) }
     var defaultCurrency by remember(profile) { mutableStateOf(profile.defaultCurrency) }
-    var isSaved by remember { mutableStateOf(false) }
+    var isDirty by remember { mutableStateOf(false) }
 
-    fun markSaved() {
-        isSaved = true
-    }
-
-    Scaffold {
+    Surface {
         Column(
             modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -35,14 +31,14 @@ fun ProfileTab(vm: ProfileViewModel) {
 
             OutlinedTextField(
                 value = brandName,
-                onValueChange = { brandName = it; markSaved() },
+                onValueChange = { brandName = it; isDirty = true },
                 label = { Text("Название / Имя") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
                 value = markupPercent,
-                onValueChange = { markupPercent = it; markSaved() },
+                onValueChange = { markupPercent = it; isDirty = true },
                 label = { Text("Наценка (%)") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -51,7 +47,7 @@ fun ProfileTab(vm: ProfileViewModel) {
             )
             OutlinedTextField(
                 value = hourlyRate,
-                onValueChange = { hourlyRate = it; markSaved() },
+                onValueChange = { hourlyRate = it; isDirty = true },
                 label = { Text("Стоимость часа работы") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -59,7 +55,7 @@ fun ProfileTab(vm: ProfileViewModel) {
             )
             OutlinedTextField(
                 value = defaultCurrency,
-                onValueChange = { defaultCurrency = it; markSaved() },
+                onValueChange = { defaultCurrency = it; isDirty = true },
                 label = { Text("Валюта") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
@@ -75,8 +71,8 @@ fun ProfileTab(vm: ProfileViewModel) {
                             hourlyRate = hourlyRate.toDoubleOrNull() ?: 0.0,
                             defaultCurrency = defaultCurrency.trim().ifBlank { "Br" })
                     )
-                    isSaved = false
-                }, enabled = isSaved, modifier = Modifier.fillMaxWidth()
+                    isDirty = false
+                }, enabled = isDirty, modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Сохранить")
             }

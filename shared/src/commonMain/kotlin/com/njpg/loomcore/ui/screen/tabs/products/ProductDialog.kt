@@ -1,8 +1,13 @@
 package com.njpg.loomcore.ui.screen.tabs.products
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -10,11 +15,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.core.DateVisualTransformation
 import com.njpg.loomcore.core.formatAsDate
+import com.njpg.loomcore.data.ImageStorage
 import com.njpg.loomcore.model.*
+import java.awt.FileDialog
+import java.awt.Frame
+import java.io.File
 
 @Composable
 fun ProductDialog(
@@ -34,6 +44,9 @@ fun ProductDialog(
     var startDate by remember { mutableStateOf(initial?.startDate?.filter { it.isDigit() } ?: "") }
     var endDate by remember { mutableStateOf(initial?.endDate?.filter { it.isDigit() } ?: "") }
 
+    val existingPhotos = remember { mutableStateListOf(*(initial?.photoPaths?.toTypedArray() ?: emptyArray())) }
+    val newSelectedPhotos = remember { mutableStateListOf<File>() }
+
     val usageRows = remember {
         mutableStateListOf(
             *(initial?.materialsUsed?.map { it.materialId to it.amount.toString() }?.toTypedArray() ?: emptyArray())
@@ -42,13 +55,15 @@ fun ProductDialog(
 
     val selectedClientIds = remember { mutableStateSetOf(*(initial?.clientIds?.toTypedArray() ?: emptyArray())) }
 
-    val previewCost = remember(usageRows.toList(), workTimeHours) {
-        val matCost = usageRows.sumOf { (matId, amountStr) ->
-            val mat = allMaterials.find { it.id == matId }
-            (mat?.costPerUnit ?: 0.0) * (amountStr.toDoubleOrNull() ?: 0.0)
+    val previewCost by remember(usageRows.toList(), workTimeHours) {
+        derivedStateOf {
+            val matCost = usageRows.sumOf { (matId, amountStr) ->
+                val mat = allMaterials.find { it.id == matId }
+                (mat?.costPerUnit ?: 0.0) * (amountStr.toDoubleOrNull() ?: 0.0)
+            }
+            val labor = (workTimeHours.toDoubleOrNull() ?: 0.0) * profile.hourlyRate
+            matCost + labor
         }
-        val labor = (workTimeHours.toDoubleOrNull() ?: 0.0) * profile.hourlyRate
-        matCost + labor
     }
     val previewPrice = previewCost * (1.0 + profile.markupPercent / 100.0)
 
@@ -73,11 +88,9 @@ fun ProductDialog(
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         OutlinedTextField(
                             value = startDate,
-                            onValueChange = { newValue ->
-                                val digitsOnly = newValue.filter { it.isDigit() }
-                                if (digitsOnly.length <= 8) {
-                                    startDate = digitsOnly
-                                }
+                            onValueChange = { v ->
+                                val d = v.filter { it.isDigit() }
+                                if (d.length <= 8) startDate = d
                             },
                             label = { Text("Дата начала") },
                             placeholder = { Text("ДД.ММ.ГГГГ") },
@@ -88,11 +101,9 @@ fun ProductDialog(
                         )
                         OutlinedTextField(
                             value = endDate,
-                            onValueChange = { newValue ->
-                                val digitsOnly = newValue.filter { it.isDigit() }
-                                if (digitsOnly.length <= 8) {
-                                    endDate = digitsOnly
-                                }
+                            onValueChange = { v ->
+                                val d = v.filter { it.isDigit() }
+                                if (d.length <= 8) endDate = d
                             },
                             label = { Text("Дата конца") },
                             placeholder = { Text("ДД.ММ.ГГГГ") },
@@ -130,8 +141,8 @@ fun ProductDialog(
                 item {
                     TextButton(
                         onClick = {
-                            val firstAvailable = allMaterials.firstOrNull()?.id ?: return@TextButton
-                            usageRows.add(firstAvailable to "1")
+                            val firstId = allMaterials.firstOrNull()?.id ?: return@TextButton
+                            usageRows.add(firstId to "1")
                         }, enabled = allMaterials.isNotEmpty()
                     ) {
                         Icon(Icons.Default.Add, null)
@@ -163,9 +174,7 @@ fun ProductDialog(
                     Spacer(Modifier.height(4.dp))
                     HorizontalDivider()
                     Spacer(Modifier.height(4.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Text("Себестоимость:", style = MaterialTheme.typography.bodySmall)
                         Text(
                             "%.2f ${profile.defaultCurrency}".format(previewCost),
@@ -173,15 +182,52 @@ fun ProductDialog(
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Text("Цена (+${profile.markupPercent}%):", style = MaterialTheme.typography.bodySmall)
                         Text(
                             "%.2f ${profile.defaultCurrency}".format(previewPrice),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.primary
                         )
+                    }
+                }
+
+                item {
+                    Spacer(Modifier.height(8.dp))
+                    Text("Фотографии", style = MaterialTheme.typography.labelLarge)
+                }
+                item {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth().height(100.dp)
+                    ) {
+                        item {
+                            Box(
+                                modifier = Modifier.size(100.dp).clip(RoundedCornerShape(8.dp))
+                                    .background(MaterialTheme.colorScheme.surfaceVariant).clickable {
+                                        val fd = FileDialog(null as Frame?, "Выбрать фото", FileDialog.LOAD)
+                                        fd.file = "*.jpg;*.jpeg;*.png;*.webp"
+                                        fd.isMultipleMode = true
+                                        fd.isVisible = true
+                                        if (fd.files != null) newSelectedPhotos.addAll(fd.files)
+                                    }, contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Default.Add,
+                                    "Добавить фото",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                        items(existingPhotos) { photoName ->
+                            PhotoPreviewItem(
+                                file = ImageStorage.resolve(photoName)?.toFile(),
+                                onDelete = { existingPhotos.remove(photoName) })
+                        }
+                        items(newSelectedPhotos) { file ->
+                            PhotoPreviewItem(
+                                file = file, onDelete = { newSelectedPhotos.remove(file) })
+                        }
                     }
                 }
 
@@ -209,6 +255,12 @@ fun ProductDialog(
                 val cachedCost = matCost + labor
                 val finalPrice = cachedCost * (1.0 + profile.markupPercent / 100.0)
 
+                val importedNewNames = newSelectedPhotos.map { ImageStorage.importPhoto(it.toPath()) }
+                val finalPhotoPaths = existingPhotos + importedNewNames
+
+                val removedPhotos = (initial?.photoPaths ?: emptyList()) - existingPhotos.toSet()
+                removedPhotos.forEach { ImageStorage.deletePhoto(it) }
+
                 onConfirm(
                     Product(
                         id = productId,
@@ -216,11 +268,11 @@ fun ProductDialog(
                         materialsUsed = usages,
                         clientIds = selectedClientIds.toList(),
                         workTimeHours = workTimeHours.toDoubleOrNull() ?: 0.0,
-                        startDate = formatAsDate(startDate).trim().ifBlank { null },
-                        endDate = formatAsDate(endDate).trim().ifBlank { null },
+                        startDate = formatAsDate(startDate).ifBlank { null },
+                        endDate = formatAsDate(endDate).ifBlank { null },
                         cachedCost = cachedCost,
                         finalPrice = finalPrice,
-                        photoPath = initial?.photoPath,
+                        photoPaths = finalPhotoPaths,
                         notes = notes.trim()
                     )
                 )

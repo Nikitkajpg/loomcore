@@ -8,7 +8,6 @@ import com.njpg.loomcore.model.Product
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.nio.file.Path
 
 class ProductsViewModel : ViewModel() {
 
@@ -34,22 +33,9 @@ class ProductsViewModel : ViewModel() {
 
     fun delete(id: Int) {
         val product = _products.value.find { it.id == id }
-
-        if (product?.photoPath != null) {
-            ImageStorage.deletePhoto(product.photoPath)
-        }
+        product?.photoPaths?.forEach { ImageStorage.deletePhoto(it) }
         _products.update { list -> list.filter { it.id != id } }
         repo.saveAll(_products.value)
-    }
-
-    fun importPhoto(productId: Int, source: Path) {
-        val product = _products.value.find { it.id == productId } ?: return
-        val fileName = ImageStorage.importPhoto(source)
-
-        if (product.photoPath != null && product.photoPath != fileName) {
-            ImageStorage.deletePhoto(product.photoPath)
-        }
-        update(product.copy(photoPath = fileName))
     }
 
     fun nextId(): Int = repo.nextId(_products.value)

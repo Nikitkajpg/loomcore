@@ -4,6 +4,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import com.njpg.loomcore.model.Product
 import com.njpg.loomcore.ui.screen.tabs.TabScaffold
+import com.njpg.loomcore.ui.screen.tabs.products.card.ProductCard
 import com.njpg.loomcore.viewmodel.ClientsViewModel
 import com.njpg.loomcore.viewmodel.MaterialsViewModel
 import com.njpg.loomcore.viewmodel.ProductsViewModel
@@ -54,8 +55,7 @@ fun ProductsTab(
                 allClients = clients,
                 currency = profile.defaultCurrency,
                 onEdit = { openDialog(product) },
-                onDelete = { vm.delete(product.id) },
-                onPickPhoto = { vm.importPhoto(product.id, it.toPath()) })
+                onDelete = { vm.delete(product.id) })
         }
     }
 }
