@@ -3,6 +3,7 @@ package com.njpg.loomcore.ui.screen.tabs.products
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import com.njpg.loomcore.model.Product
+import com.njpg.loomcore.ui.library.ConfirmDeleteDialog
 import com.njpg.loomcore.ui.screen.tabs.TabScaffold
 import com.njpg.loomcore.ui.screen.tabs.products.card.ProductCard
 import com.njpg.loomcore.viewmodel.ClientsViewModel
@@ -21,6 +22,7 @@ fun ProductsTab(
 
     var showDialog by remember { mutableStateOf(false) }
     var editTarget by remember { mutableStateOf<Product?>(null) }
+    var itemToDelete by remember { mutableStateOf<Product?>(null) }
 
     fun openDialog(target: Product?) {
         editTarget = target; showDialog = true
@@ -44,6 +46,13 @@ fun ProductsTab(
             onDismiss = { closeDialog() })
     }
 
+    itemToDelete?.let { product ->
+        ConfirmDeleteDialog(itemName = product.name, onConfirm = {
+            vm.delete(product.id)
+            itemToDelete = null
+        }, onDismiss = { itemToDelete = null })
+    }
+
     TabScaffold(
         isEmpty = products.isEmpty(),
         emptyText = "Нет изделий. Нажмите + чтобы добавить.",
@@ -55,7 +64,7 @@ fun ProductsTab(
                 allClients = clients,
                 currency = profile.defaultCurrency,
                 onEdit = { openDialog(product) },
-                onDelete = { vm.delete(product.id) })
+                onDelete = { itemToDelete = product })
         }
     }
 }

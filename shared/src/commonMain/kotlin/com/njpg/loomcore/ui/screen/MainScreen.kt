@@ -55,9 +55,9 @@ fun MainScreen() {
             Box(modifier = Modifier.fillMaxSize()) {
                 when (selectedTab) {
                     0 -> ProductsTab(productsVm, materialsVm, clientsVm, profileVm)
-                    1 -> MaterialsTab(materialsVm, suppliersVm)
-                    2 -> SuppliersTab(suppliersVm)
-                    3 -> ClientsTab(clientsVm)
+                    1 -> MaterialsTab(materialsVm, suppliersVm, productsVm)
+                    2 -> SuppliersTab(suppliersVm, materialsVm)
+                    3 -> ClientsTab(clientsVm, productsVm)
                     4 -> ProfileTab(profileVm)
                 }
             }
