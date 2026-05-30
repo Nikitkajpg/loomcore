@@ -33,6 +33,11 @@ class ProductsViewModel : ViewModel() {
     }
 
     fun delete(id: Int) {
+        val product = _products.value.find { it.id == id }
+
+        if (product?.photoPath != null) {
+            ImageStorage.deletePhoto(product.photoPath)
+        }
         _products.update { list -> list.filter { it.id != id } }
         repo.saveAll(_products.value)
     }
@@ -40,6 +45,10 @@ class ProductsViewModel : ViewModel() {
     fun importPhoto(productId: Int, source: Path) {
         val product = _products.value.find { it.id == productId } ?: return
         val fileName = ImageStorage.importPhoto(source)
+
+        if (product.photoPath != null && product.photoPath != fileName) {
+            ImageStorage.deletePhoto(product.photoPath)
+        }
         update(product.copy(photoPath = fileName))
     }
 
