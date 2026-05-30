@@ -35,7 +35,9 @@ fun SuppliersTab(vm: SuppliersViewModel) {
     }
 
     TabScaffold(
-        isEmpty = suppliers.isEmpty(), emptyText = "Нет поставщиков.", onAdd = { openDialog(null) }) {
+        isEmpty = suppliers.isEmpty(),
+        emptyText = "Нет поставщиков. Нажмите + чтобы добавить.",
+        onAdd = { openDialog(null) }) {
         items(suppliers, key = { it.id }) { supplier ->
             SupplierCard(supplier = supplier, onEdit = { openDialog(supplier) }, onDelete = { vm.delete(supplier.id) })
         }

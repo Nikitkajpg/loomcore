@@ -57,7 +57,7 @@ fun ProductCard(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.Top
         ) {
-            // Фото
+
             Box(
                 modifier = Modifier.size(80.dp).clip(RoundedCornerShape(8.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant), contentAlignment = Alignment.Center
@@ -74,11 +74,9 @@ fun ProductCard(
                 }
             }
 
-            // Основная информация
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
                 Text(product.name, style = MaterialTheme.typography.titleMedium)
 
-                // Даты
                 if (product.startDate != null || product.endDate != null) {
                     Text(
                         text = buildString {
@@ -91,7 +89,6 @@ fun ProductCard(
                     )
                 }
 
-                // Материалы
                 if (product.materialsUsed.isNotEmpty()) {
                     Text(
                         text = product.materialsUsed.joinToString(", ") { usage ->
@@ -103,7 +100,6 @@ fun ProductCard(
                     )
                 }
 
-                // Покупатели
                 if (product.clientIds.isNotEmpty()) {
                     val names = product.clientIds.mapNotNull { id -> allClients.find { it.id == id }?.name }
                     Text(
@@ -115,7 +111,6 @@ fun ProductCard(
 
                 Spacer(Modifier.height(2.dp))
 
-                // Цены
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Column {
                         Text(
@@ -150,7 +145,6 @@ fun ProductCard(
                 }
             }
 
-            // Кнопки
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 IconButton(onClick = {
                     val fd = FileDialog(null as Frame?, "Выбрать фото", FileDialog.LOAD)

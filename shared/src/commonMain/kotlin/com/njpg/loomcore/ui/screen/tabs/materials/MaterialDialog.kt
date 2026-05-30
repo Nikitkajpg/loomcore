@@ -55,7 +55,7 @@ fun MaterialDialog(
                     modifier = Modifier.weight(1f)
                 )
             }
-            // Выбор поставщика
+
             if (suppliers.isNotEmpty()) {
                 Box {
                     OutlinedTextField(

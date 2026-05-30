@@ -12,6 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.njpg.loomcore.core.DateVisualTransformation
+import com.njpg.loomcore.core.formatAsDate
 import com.njpg.loomcore.model.*
 
 @Composable
@@ -29,20 +31,17 @@ fun ProductDialog(
     var name by remember { mutableStateOf(initial?.name ?: "") }
     var notes by remember { mutableStateOf(initial?.notes ?: "") }
     var workTimeHours by remember { mutableStateOf(initial?.workTimeHours?.toString() ?: "") }
-    var startDate by remember { mutableStateOf(initial?.startDate ?: "") }
-    var endDate by remember { mutableStateOf(initial?.endDate ?: "") }
+    var startDate by remember { mutableStateOf(initial?.startDate?.filter { it.isDigit() } ?: "") }
+    var endDate by remember { mutableStateOf(initial?.endDate?.filter { it.isDigit() } ?: "") }
 
-    // Список расходов: MutableList чтобы можно было добавлять/удалять строки
     val usageRows = remember {
         mutableStateListOf(
             *(initial?.materialsUsed?.map { it.materialId to it.amount.toString() }?.toTypedArray() ?: emptyArray())
         )
     }
 
-    // Выбранные клиенты — Set ID
     val selectedClientIds = remember { mutableStateSetOf(*(initial?.clientIds?.toTypedArray() ?: emptyArray())) }
 
-    // Предварительный расчёт для отображения в диалоге
     val previewCost = remember(usageRows.toList(), workTimeHours) {
         val matCost = usageRows.sumOf { (matId, amountStr) ->
             val mat = allMaterials.find { it.id == matId }
@@ -61,7 +60,6 @@ fun ProductDialog(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth().heightIn(max = 500.dp)
             ) {
-                // Основное
                 item {
                     OutlinedTextField(
                         value = name,
@@ -75,18 +73,32 @@ fun ProductDialog(
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         OutlinedTextField(
                             value = startDate,
-                            onValueChange = { startDate = it },
+                            onValueChange = { newValue ->
+                                val digitsOnly = newValue.filter { it.isDigit() }
+                                if (digitsOnly.length <= 8) {
+                                    startDate = digitsOnly
+                                }
+                            },
                             label = { Text("Дата начала") },
-                            placeholder = { Text("ГГГГ-ММ-ДД") },
+                            placeholder = { Text("ДД.ММ.ГГГГ") },
                             singleLine = true,
+                            visualTransformation = DateVisualTransformation(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             modifier = Modifier.weight(1f)
                         )
                         OutlinedTextField(
                             value = endDate,
-                            onValueChange = { endDate = it },
+                            onValueChange = { newValue ->
+                                val digitsOnly = newValue.filter { it.isDigit() }
+                                if (digitsOnly.length <= 8) {
+                                    endDate = digitsOnly
+                                }
+                            },
                             label = { Text("Дата конца") },
-                            placeholder = { Text("ГГГГ-ММ-ДД") },
+                            placeholder = { Text("ДД.ММ.ГГГГ") },
                             singleLine = true,
+                            visualTransformation = DateVisualTransformation(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -102,7 +114,6 @@ fun ProductDialog(
                     )
                 }
 
-                // Материалы
                 item {
                     Spacer(Modifier.height(4.dp))
                     Text("Материалы", style = MaterialTheme.typography.labelLarge)
@@ -129,7 +140,6 @@ fun ProductDialog(
                     }
                 }
 
-                // Покупатели
                 if (allClients.isNotEmpty()) {
                     item {
                         Spacer(Modifier.height(4.dp))
@@ -149,7 +159,6 @@ fun ProductDialog(
                     }
                 }
 
-                // Предпросмотр расчёта
                 item {
                     Spacer(Modifier.height(4.dp))
                     HorizontalDivider()
@@ -192,7 +201,6 @@ fun ProductDialog(
                 val usages = usageRows.filter { (_, amt) -> amt.toDoubleOrNull() != null }
                     .map { (matId, amt) -> MaterialUsage(matId, amt.toDouble()) }
 
-                // Финальный расчёт
                 val matCost = usages.sumOf { usage ->
                     val mat = allMaterials.find { it.id == usage.materialId }
                     (mat?.costPerUnit ?: 0.0) * usage.amount
@@ -208,8 +216,8 @@ fun ProductDialog(
                         materialsUsed = usages,
                         clientIds = selectedClientIds.toList(),
                         workTimeHours = workTimeHours.toDoubleOrNull() ?: 0.0,
-                        startDate = startDate.trim().ifBlank { null },
-                        endDate = endDate.trim().ifBlank { null },
+                        startDate = formatAsDate(startDate).trim().ifBlank { null },
+                        endDate = formatAsDate(endDate).trim().ifBlank { null },
                         cachedCost = cachedCost,
                         finalPrice = finalPrice,
                         photoPath = initial?.photoPath,

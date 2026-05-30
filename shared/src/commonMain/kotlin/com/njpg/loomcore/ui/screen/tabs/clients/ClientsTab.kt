@@ -35,7 +35,7 @@ fun ClientsTab(vm: ClientsViewModel) {
     }
 
     TabScaffold(
-        isEmpty = clients.isEmpty(), emptyText = "Нет клиентов.", onAdd = { openDialog(null) }) {
+        isEmpty = clients.isEmpty(), emptyText = "Нет клиентов. Нажмите + чтобы добавить.", onAdd = { openDialog(null) }) {
         items(clients, key = { it.id }) { client ->
             ClientCard(client = client, onEdit = { openDialog(client) }, onDelete = { vm.delete(client.id) })
         }
