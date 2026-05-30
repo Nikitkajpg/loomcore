@@ -21,8 +21,19 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.njpg.loomcore"
+
+            packageName = "LoomCore"
             packageVersion = "1.0.0"
+            description = "Программа для учета швейного производства"
+            vendor = "NJPG"
+
+            windows {
+                shortcut = true
+                dirChooser = true
+                menuGroup = "LoomCore"
+
+                iconFile.set(project.file("src/main/resources/logo.ico"))
+            }
         }
     }
 }
