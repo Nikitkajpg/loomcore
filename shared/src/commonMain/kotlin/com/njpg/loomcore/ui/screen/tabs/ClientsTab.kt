@@ -13,10 +13,10 @@ import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.model.Client
 import com.njpg.loomcore.ui.components.ContactDialog
 import com.njpg.loomcore.ui.components.ContactDraft
-import com.njpg.loomcore.viewmodel.MainViewModel
+import com.njpg.loomcore.viewmodel.ClientsViewModel
 
 @Composable
-fun ClientsTab(vm: MainViewModel) {
+fun ClientsTab(vm: ClientsViewModel) {
     val clients by vm.clients.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var editTarget by remember { mutableStateOf<Client?>(null) }
@@ -25,10 +25,10 @@ fun ClientsTab(vm: MainViewModel) {
         ContactDialog(
             title = if (editTarget == null) "Новый клиент" else "Редактировать клиента",
             initial = editTarget?.let { ContactDraft(it.id, it.name, it.contact, it.notes) },
-            nextId = vm.nextClientId(),
+            nextId = vm.nextId(),
             onConfirm = { d ->
                 val c = Client(d.id, d.name, d.contact, d.notes)
-                if (editTarget == null) vm.addClient(c) else vm.updateClient(c)
+                if (editTarget == null) vm.add(c) else vm.update(c)
                 showDialog = false; editTarget = null
             },
             onDismiss = { showDialog = false; editTarget = null })
@@ -56,7 +56,7 @@ fun ClientsTab(vm: MainViewModel) {
                         contact = c.contact,
                         notes = c.notes,
                         onEdit = { editTarget = c; showDialog = true },
-                        onDelete = { vm.deleteClient(c.id) })
+                        onDelete = { vm.delete(c.id) })
                 }
             }
         }

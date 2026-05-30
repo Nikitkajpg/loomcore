@@ -10,18 +10,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.njpg.loomcore.ui.components.UnitDialog
-import com.njpg.loomcore.viewmodel.MainViewModel
+import com.njpg.loomcore.model.Product
+import com.njpg.loomcore.ui.components.ProductDialog
+import com.njpg.loomcore.viewmodel.ProductsViewModel
 
 @Composable
-fun UnitsTab(vm: MainViewModel) {
-    val units by vm.units.collectAsState()
+fun ProductsTab(vm: ProductsViewModel) {
+    val products by vm.products.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
-    var editTarget by remember { mutableStateOf<com.njpg.loomcore.model.ProductUnit?>(null) }
+    var editTarget by remember { mutableStateOf<Product?>(null) }
 
     if (showDialog) {
-        UnitDialog(initial = editTarget, nextId = vm.nextUnitId(), onConfirm = { unit ->
-            if (editTarget == null) vm.addUnit(unit) else vm.updateUnit(unit)
+        ProductDialog(initial = editTarget, nextId = vm.nextId(), onConfirm = { unit ->
+            if (editTarget == null) vm.add(unit) else vm.update(unit)
             showDialog = false
             editTarget = null
         }, onDismiss = { showDialog = false; editTarget = null })
@@ -33,7 +34,7 @@ fun UnitsTab(vm: MainViewModel) {
                 Icon(Icons.Default.Add, contentDescription = "Добавить изделие")
             }
         }) { padding ->
-        if (units.isEmpty()) {
+        if (products.isEmpty()) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
                 Text("Нет изделий. Нажмите + чтобы добавить.", style = MaterialTheme.typography.bodyLarge)
             }
@@ -43,14 +44,12 @@ fun UnitsTab(vm: MainViewModel) {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                items(units, key = { it.id }) { unit ->
-                    UnitCard(
-                        productUnit = unit,
+                items(products, key = { it.id }) { unit ->
+                    ProductCard(
+                        product = unit,
                         onEdit = { editTarget = it; showDialog = true },
-                        onDelete = { vm.deleteUnit(it.id) },
-                        onPickPhoto = { picked ->
-                            vm.importUnitPhoto(unit.id, picked.toPath())
-                        })
+                        onDelete = { vm.delete(it.id) },
+                        onPickPhoto = { vm.importPhoto(unit.id, it.toPath()) })
                 }
             }
         }

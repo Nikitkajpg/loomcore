@@ -13,10 +13,10 @@ import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.model.Supplier
 import com.njpg.loomcore.ui.components.ContactDialog
 import com.njpg.loomcore.ui.components.ContactDraft
-import com.njpg.loomcore.viewmodel.MainViewModel
+import com.njpg.loomcore.viewmodel.SuppliersViewModel
 
 @Composable
-fun SuppliersTab(vm: MainViewModel) {
+fun SuppliersTab(vm: SuppliersViewModel) {
     val suppliers by vm.suppliers.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var editTarget by remember { mutableStateOf<Supplier?>(null) }
@@ -25,10 +25,10 @@ fun SuppliersTab(vm: MainViewModel) {
         ContactDialog(
             title = if (editTarget == null) "Новый поставщик" else "Редактировать поставщика",
             initial = editTarget?.let { ContactDraft(it.id, it.name, it.contact, it.notes) },
-            nextId = vm.nextSupplierId(),
+            nextId = vm.nextId(),
             onConfirm = { d ->
                 val s = Supplier(d.id, d.name, d.contact, d.notes)
-                if (editTarget == null) vm.addSupplier(s) else vm.updateSupplier(s)
+                if (editTarget == null) vm.add(s) else vm.update(s)
                 showDialog = false; editTarget = null
             },
             onDismiss = { showDialog = false; editTarget = null })
@@ -56,7 +56,7 @@ fun SuppliersTab(vm: MainViewModel) {
                         contact = s.contact,
                         notes = s.notes,
                         onEdit = { editTarget = s; showDialog = true },
-                        onDelete = { vm.deleteSupplier(s.id) })
+                        onDelete = { vm.delete(s.id) })
                 }
             }
         }

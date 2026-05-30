@@ -11,7 +11,8 @@ import kotlin.io.path.writeText
 private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
 
 class JsonRepository<T>(
-    private val file: Path, private val serializer: KSerializer<T>
+    private val file: Path, private val serializer: KSerializer<T>,
+    private val getId: (T) -> Int,
 ) {
     fun loadAll(): List<T> {
         if (!file.exists()) return emptyList()
@@ -25,4 +26,6 @@ class JsonRepository<T>(
     fun saveAll(items: List<T>) {
         file.writeText(json.encodeToString(ListSerializer(serializer), items))
     }
+
+    fun nextId(current: List<T>): Int = (current.maxOfOrNull { getId(it) } ?: 0) + 1
 }

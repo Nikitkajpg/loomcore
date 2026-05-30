@@ -23,7 +23,7 @@ object Paths {
     val imgDir: Path by lazy { dataDir.resolve("img").also { it.createDirectories() } }
 
     val settingsFile: Path by lazy { settingsDir.resolve("settings.properties") }
-    val unitsFile: Path by lazy { dbDir.resolve("units.json") }
+    val productsFile: Path by lazy { dbDir.resolve("products.json") }
     val suppliersFile: Path by lazy { dbDir.resolve("suppliers.json") }
     val clientsFile: Path by lazy { dbDir.resolve("clients.json") }
 

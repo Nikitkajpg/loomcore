@@ -12,13 +12,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.njpg.loomcore.model.ProductUnit
+import com.njpg.loomcore.model.Product
 
 @Composable
-fun UnitDialog(
-    initial: ProductUnit?, nextId: Int, onConfirm: (ProductUnit) -> kotlin.Unit, onDismiss: () -> kotlin.Unit
+fun ProductDialog(
+    initial: Product?, nextId: Int, onConfirm: (Product) -> Unit, onDismiss: () -> Unit
 ) {
-    var number by remember { mutableStateOf(initial?.number ?: "") }
+    val productId = initial?.id ?: nextId
     var name by remember { mutableStateOf(initial?.name ?: "") }
     var cost by remember { mutableStateOf(initial?.cost?.toString() ?: "") }
     var price by remember { mutableStateOf(initial?.price?.toString() ?: "") }
@@ -29,9 +29,10 @@ fun UnitDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
-                    value = number,
-                    onValueChange = { number = it },
-                    label = { Text("Номер") },
+                    value = productId.toString(),
+                    onValueChange = {},
+                    label = { Text("ID") },
+                    readOnly = true,
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -61,19 +62,24 @@ fun UnitDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = {
-                val productUnit = ProductUnit(
-                    id = initial?.id ?: nextId,
-                    number = number.trim(),
-                    name = name.trim(),
-                    cost = cost.toDoubleOrNull() ?: 0.0,
-                    price = price.toDoubleOrNull() ?: 0.0,
-                    photoPath = initial?.photoPath
-                )
-                onConfirm(productUnit)
-            }) { Text("Сохранить") }
+            TextButton(
+                onClick = {
+                    onConfirm(
+                        Product(
+                            id = productId,
+                            name = name.trim(),
+                            cost = cost.toDoubleOrNull() ?: 0.0,
+                            price = price.toDoubleOrNull() ?: 0.0,
+                            photoPath = initial?.photoPath
+                        )
+                    )
+                }) {
+                Text("Сохранить")
+            }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Отмена") }
+            TextButton(onClick = onDismiss) {
+                Text("Отмена")
+            }
         })
 }
