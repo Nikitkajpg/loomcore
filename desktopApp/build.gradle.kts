@@ -24,7 +24,7 @@ compose.desktop {
 
             packageName = "LoomCore"
             packageVersion = "1.0.0"
-            description = "Программа для учета швейного производства"
+            description = "Sewing production management software"
             vendor = "NJPG"
 
             windows {
