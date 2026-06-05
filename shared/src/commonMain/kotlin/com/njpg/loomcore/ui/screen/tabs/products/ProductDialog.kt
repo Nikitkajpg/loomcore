@@ -59,9 +59,9 @@ fun ProductDialog(
         derivedStateOf {
             val matCost = usageRows.sumOf { (matId, amountStr) ->
                 val mat = allMaterials.find { it.id == matId }
-                (mat?.costPerUnit ?: 0.0) * (amountStr.toDoubleOrNull() ?: 0.0)
+                (mat?.costPerUnit ?: 0.0) * (amountStr.replace(',', '.').toDoubleOrNull() ?: 0.0)
             }
-            val labor = (workTimeHours.toDoubleOrNull() ?: 0.0) * profile.hourlyRate
+            val labor = (workTimeHours.replace(',', '.').toDoubleOrNull() ?: 0.0) * profile.hourlyRate
             matCost + labor
         }
     }
@@ -244,14 +244,14 @@ fun ProductDialog(
         },
         confirmButton = {
             TextButton(onClick = {
-                val usages = usageRows.filter { (_, amt) -> amt.toDoubleOrNull() != null }
-                    .map { (matId, amt) -> MaterialUsage(matId, amt.toDouble()) }
+                val usages = usageRows.filter { (_, amt) -> amt.replace(',', '.').toDoubleOrNull() != null }
+                    .map { (matId, amt) -> MaterialUsage(matId, amt.replace(',', '.').toDouble()) }
 
                 val matCost = usages.sumOf { usage ->
                     val mat = allMaterials.find { it.id == usage.materialId }
                     (mat?.costPerUnit ?: 0.0) * usage.amount
                 }
-                val labor = (workTimeHours.toDoubleOrNull() ?: 0.0) * profile.hourlyRate
+                val labor = (workTimeHours.replace(',', '.').toDoubleOrNull() ?: 0.0) * profile.hourlyRate
                 val cachedCost = matCost + labor
                 val finalPrice = cachedCost * (1.0 + profile.markupPercent / 100.0)
 
@@ -267,7 +267,7 @@ fun ProductDialog(
                         name = name.trim(),
                         materialsUsed = usages,
                         clientIds = selectedClientIds.toList(),
-                        workTimeHours = workTimeHours.toDoubleOrNull() ?: 0.0,
+                        workTimeHours = workTimeHours.replace(',', '.').toDoubleOrNull() ?: 0.0,
                         startDate = formatAsDate(startDate).ifBlank { null },
                         endDate = formatAsDate(endDate).ifBlank { null },
                         cachedCost = cachedCost,
