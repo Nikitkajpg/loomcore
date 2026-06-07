@@ -3,9 +3,8 @@ package com.njpg.loomcore.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Supplier(
+data class PriceGroup(
     val id: Int,
     val name: String,
-    val url: String = "",
-    val notes: String = ""
+    val rows: List<PriceRow> = emptyList()
 )
