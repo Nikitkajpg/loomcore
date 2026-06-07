@@ -17,7 +17,8 @@ object Paths {
         }
     }
 
-    val dataDir: Path by lazy { appDir.resolve("data").also { it.createDirectories() } }
+    private val appParentDir: Path by lazy { appDir.parent ?: appDir }
+    val dataDir: Path by lazy { appParentDir.resolve("LoomCoreData").also { it.createDirectories() } }
     val settingsDir: Path by lazy { dataDir.resolve("settings").also { it.createDirectories() } }
     val dbDir: Path by lazy { dataDir.resolve("db").also { it.createDirectories() } }
     val imgDir: Path by lazy { dataDir.resolve("img").also { it.createDirectories() } }
