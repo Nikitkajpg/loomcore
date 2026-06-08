@@ -85,9 +85,7 @@ fun ProfileTab(vm: ProfileViewModel) {
 
             HorizontalDivider()
 
-            PriceListTable(
-                vm = priceVm, modifier = Modifier.weight(1f).fillMaxWidth()
-            )
+            PriceListTable(vm = priceVm, modifier = Modifier.weight(1f).fillMaxWidth())
         }
     }
 }

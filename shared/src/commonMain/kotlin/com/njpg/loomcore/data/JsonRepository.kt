@@ -2,13 +2,10 @@ package com.njpg.loomcore.data
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.json.Json
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
-
-val AppJson = Json { prettyPrint = true; ignoreUnknownKeys = true }
 
 class JsonRepository<T>(
     private val file: Path,

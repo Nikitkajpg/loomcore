@@ -12,9 +12,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LabeledRow(label: String, content: @Composable () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             text = "$label:",
             style = MaterialTheme.typography.labelSmall,

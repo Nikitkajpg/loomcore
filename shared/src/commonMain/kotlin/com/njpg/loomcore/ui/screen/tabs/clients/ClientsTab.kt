@@ -3,15 +3,12 @@ package com.njpg.loomcore.ui.screen.tabs.clients
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import com.njpg.loomcore.model.Client
-import com.njpg.loomcore.ui.library.ConfirmDeleteDialog
 import com.njpg.loomcore.ui.screen.tabs.TabScaffold
 import com.njpg.loomcore.viewmodel.ClientsViewModel
-import com.njpg.loomcore.viewmodel.ProductsViewModel
 
 @Composable
-fun ClientsTab(vm: ClientsViewModel, productsVm: ProductsViewModel) {
+fun ClientsTab(vm: ClientsViewModel) {
     val clients by vm.clients.collectAsState()
-    val products by productsVm.products.collectAsState()
 
     var showDialog by remember { mutableStateOf(false) }
     var editTarget by remember { mutableStateOf<Client?>(null) }
@@ -37,18 +34,6 @@ fun ClientsTab(vm: ClientsViewModel, productsVm: ProductsViewModel) {
                 closeDialog()
             },
             onDismiss = { closeDialog() })
-    }
-
-    itemToDelete?.let { client ->
-        val linkedProducts = products.filter { p -> client.id in p.clientIds }
-        val warning = if (linkedProducts.isNotEmpty()) {
-            "Этот покупатель привязан к изделиям:\n" + linkedProducts.joinToString(", ") { it.name }
-        } else null
-
-        ConfirmDeleteDialog(itemName = client.name, warningText = warning, onConfirm = {
-            vm.delete(client.id)
-            itemToDelete = null
-        }, onDismiss = { itemToDelete = null })
     }
 
     TabScaffold(

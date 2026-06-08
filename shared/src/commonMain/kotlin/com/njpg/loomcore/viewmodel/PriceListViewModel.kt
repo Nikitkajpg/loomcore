@@ -14,6 +14,7 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
 class PriceListViewModel : ViewModel() {
+
     private val _groups = MutableStateFlow<List<PriceGroup>>(emptyList())
     val groups = _groups.asStateFlow()
 
@@ -29,9 +30,7 @@ class PriceListViewModel : ViewModel() {
     }
 
     private fun save() {
-        Paths.priceListFile.writeText(
-            AppJson.encodeToString(ListSerializer(PriceGroup.serializer()), _groups.value)
-        )
+        Paths.priceListFile.writeText(AppJson.encodeToString(ListSerializer(PriceGroup.serializer()), _groups.value))
     }
 
     private fun nextGroupId() = (_groups.value.maxOfOrNull { it.id } ?: 0) + 1
@@ -43,9 +42,7 @@ class PriceListViewModel : ViewModel() {
     }
 
     fun updateGroupName(groupId: Int, name: String) {
-        _groups.update { list ->
-            list.map { if (it.id == groupId) it.copy(name = name) else it }
-        }
+        _groups.update { list -> list.map { if (it.id == groupId) it.copy(name = name) else it } }
         save()
     }
 
@@ -57,9 +54,12 @@ class PriceListViewModel : ViewModel() {
     fun addRow(groupId: Int) {
         _groups.update { list ->
             list.map { g ->
-                if (g.id == groupId) {
-                    g.copy(rows = g.rows + PriceRow(id = nextRowId(g), service = "Услуга", price = "0.00"))
-                } else g
+                if (g.id == groupId) g.copy(
+                    rows = g.rows + PriceRow(
+                        id = nextRowId(g), service = "Услуга", price = "0.00"
+                    )
+                )
+                else g
             }
         }
         save()

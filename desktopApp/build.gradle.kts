@@ -23,7 +23,7 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
 
             packageName = "LoomCore"
-            packageVersion = "1.1.0"
+            packageVersion = "1.2.0"
             description = "Sewing production management software"
             vendor = "NJPG"
 

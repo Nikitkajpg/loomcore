@@ -6,19 +6,15 @@ import com.njpg.loomcore.model.Product
 import com.njpg.loomcore.ui.library.ConfirmDeleteDialog
 import com.njpg.loomcore.ui.screen.tabs.TabScaffold
 import com.njpg.loomcore.ui.screen.tabs.products.card.ProductCard
-import com.njpg.loomcore.viewmodel.ClientsViewModel
 import com.njpg.loomcore.viewmodel.MaterialsViewModel
 import com.njpg.loomcore.viewmodel.ProductsViewModel
-import com.njpg.loomcore.viewmodel.ProfileViewModel
 
 @Composable
 fun ProductsTab(
-    vm: ProductsViewModel, materialsVm: MaterialsViewModel, clientsVm: ClientsViewModel, profileVm: ProfileViewModel
+    vm: ProductsViewModel, materialsVm: MaterialsViewModel
 ) {
     val products by vm.products.collectAsState()
     val materials by materialsVm.materials.collectAsState()
-    val clients by clientsVm.clients.collectAsState()
-    val profile by profileVm.profile.collectAsState()
 
     var showDialog by remember { mutableStateOf(false) }
     var editTarget by remember { mutableStateOf<Product?>(null) }
@@ -37,8 +33,6 @@ fun ProductsTab(
             initial = editTarget,
             nextId = vm.nextId(),
             allMaterials = materials,
-            allClients = clients,
-            profile = profile,
             onConfirm = { product ->
                 if (editTarget == null) vm.add(product) else vm.update(product)
                 closeDialog()
@@ -61,8 +55,6 @@ fun ProductsTab(
             ProductCard(
                 product = product,
                 allMaterials = materials,
-                allClients = clients,
-                currency = profile.defaultCurrency,
                 onEdit = { openDialog(product) },
                 onDelete = { itemToDelete = product })
         }

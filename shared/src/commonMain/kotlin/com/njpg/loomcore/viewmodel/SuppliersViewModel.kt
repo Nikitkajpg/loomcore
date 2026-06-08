@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 class SuppliersViewModel : ViewModel() {
 
     private val repo = JsonRepository(
-        Paths.suppliersFile, Supplier.serializer(), getId = { it.id })
+        file = Paths.suppliersFile, serializer = Supplier.serializer(), getId = { it.id })
 
     private val _suppliers = MutableStateFlow<List<Supplier>>(emptyList())
     val suppliers = _suppliers.asStateFlow()

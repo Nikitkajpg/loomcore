@@ -13,9 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.model.PriceRow
 
 @Composable
-fun ServiceRow(
-    row: PriceRow, onUpdate: (PriceRow) -> Unit, onDelete: () -> Unit
-) {
+fun ServiceRow(row: PriceRow, onUpdate: (PriceRow) -> Unit, onDelete: () -> Unit) {
     var service by remember(row.id) { mutableStateOf(row.service) }
     var price by remember(row.id) { mutableStateOf(row.price) }
 

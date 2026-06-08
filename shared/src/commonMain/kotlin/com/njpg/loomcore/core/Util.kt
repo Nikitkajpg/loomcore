@@ -8,21 +8,20 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.imageio.ImageIO
 
-fun formatAsDate(date: String): String {
-    var out = ""
-    date.forEachIndexed { index, char ->
-        out += char
-        if ((index == 1 || index == 3) && index != date.lastIndex) {
-            out += "."
+fun formatAsDate(raw: String?): String {
+    if (raw.isNullOrEmpty()) return ""
+    val digits = raw.filter { it.isDigit() }.take(8)
+    return buildString {
+        digits.forEachIndexed { i, c ->
+            append(c)
+            if ((i == 1 || i == 3) && i != digits.lastIndex) append('.')
         }
     }
-    return out
 }
 
 @Composable
 fun rememberAsyncImageBitmap(file: File?): ImageBitmap? {
     var bitmap by remember(file) { mutableStateOf<ImageBitmap?>(null) }
-
     LaunchedEffect(file) {
         bitmap = if (file?.exists() == true) {
             withContext(Dispatchers.IO) {
@@ -32,10 +31,7 @@ fun rememberAsyncImageBitmap(file: File?): ImageBitmap? {
                     null
                 }
             }
-        } else {
-            null
-        }
+        } else null
     }
-
     return bitmap
 }

@@ -22,67 +22,35 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.core.rememberAsyncImageBitmap
 import com.njpg.loomcore.data.ImageStorage
-import com.njpg.loomcore.model.Client
 import com.njpg.loomcore.model.Material
 import com.njpg.loomcore.model.Product
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ExtendedCardPart(
-    product: Product,
-    allMaterials: List<Material>,
-    allClients: List<Client>,
-    isExpanded: Boolean,
-) {
+fun ExtendedCardPart(product: Product, allMaterials: List<Material>, isExpanded: Boolean) {
     AnimatedVisibility(visible = isExpanded) {
         Column(modifier = Modifier.padding(top = 8.dp)) {
             HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    if (product.startDate != null || product.endDate != null) {
-                        LabeledRow("Даты") {
-                            Text(
-                                text = buildString {
-                                    product.startDate?.let { append(it) }
-                                    if (product.startDate != null && product.endDate != null) append(" — ")
-                                    product.endDate?.let { append(it) }
-                                }, style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                    }
-
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     if (product.workTimeHours > 0) {
                         LabeledRow("Время пошива") {
                             Text("${product.workTimeHours} ч.", style = MaterialTheme.typography.bodySmall)
                         }
                     }
-
                     if (product.materialsUsed.isNotEmpty()) {
                         LabeledRow("Материалы") {
                             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                 product.materialsUsed.forEach { usage ->
                                     val mat = allMaterials.find { it.id == usage.materialId }
                                     Text(
-                                        text = "${mat?.name ?: "?"}: ${usage.amount} ${mat?.unitName ?: ""}",
+                                        "${mat?.name ?: "?"}: ${usage.amount} ${mat?.unitName ?: ""}",
                                         style = MaterialTheme.typography.bodySmall
                                     )
                                 }
                             }
                         }
                     }
-
-                    if (product.clientIds.isNotEmpty()) {
-                        val names = product.clientIds.mapNotNull { id -> allClients.find { it.id == id }?.name }
-                        LabeledRow("Покупатели") {
-                            Text(names.joinToString(", "), style = MaterialTheme.typography.bodySmall)
-                        }
-                    }
-
                     if (product.notes.isNotBlank()) {
                         LabeledRow("Заметки") {
                             Text(product.notes, style = MaterialTheme.typography.bodySmall)
@@ -117,15 +85,15 @@ fun ExtendedCardPart(
                                             ) {
                                                 Image(
                                                     bmp,
-                                                    contentDescription = "Увеличенное фото",
+                                                    "Увеличенное фото",
                                                     contentScale = ContentScale.Fit,
                                                     modifier = Modifier.wrapContentSize()
                                                 )
                                             }
                                         }
-                                    }, delayMillis = 400, tooltipPlacement = TooltipPlacement.CursorPoint(
-                                        alignment = Alignment.BottomEnd,
-                                    )
+                                    },
+                                    delayMillis = 400,
+                                    tooltipPlacement = TooltipPlacement.CursorPoint(alignment = Alignment.BottomEnd)
                                 ) {
                                     Box(
                                         modifier = Modifier.size(250.dp).clip(RoundedCornerShape(8.dp))
@@ -148,7 +116,6 @@ fun ExtendedCardPart(
                                         }
                                     }
                                 }
-
                             }
                         }
                     } else {

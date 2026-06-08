@@ -12,9 +12,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun InlineCell(
-    value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier
-) {
+fun InlineCell(value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
@@ -24,7 +22,5 @@ fun InlineCell(
         singleLine = true,
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         modifier = modifier.padding(vertical = 6.dp),
-        decorationBox = { inner ->
-            Box(modifier = Modifier.fillMaxWidth()) { inner() }
-        })
+        decorationBox = { inner -> Box(modifier = Modifier.fillMaxWidth()) { inner() } })
 }

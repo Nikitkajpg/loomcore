@@ -5,16 +5,10 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.toPath
 
 object Paths {
-
-    /** Директория, рядом с которой лежит исполняемый файл. */
     val appDir: Path by lazy {
         val uri = Paths::class.java.protectionDomain?.codeSource?.location?.toURI()
-        if (uri != null) {
-            val jarPath = uri.toPath()
-            resolveAppDir(jarPath)
-        } else {
-            Path.of(System.getProperty("user.dir"))
-        }
+        if (uri != null) resolveAppDir(uri.toPath())
+        else Path.of(System.getProperty("user.dir"))
     }
 
     private val appParentDir: Path by lazy { appDir.parent ?: appDir }
@@ -30,6 +24,7 @@ object Paths {
     val clientsFile: Path by lazy { dbDir.resolve("clients.json") }
     val materialsFile: Path by lazy { dbDir.resolve("materials.json") }
     val priceListFile: Path by lazy { dbDir.resolve("price-list.json") }
+    val ordersFile: Path by lazy { dbDir.resolve("orders.json") }
 
     private fun resolveAppDir(jarPath: Path): Path {
         var dir = if (jarPath.toFile().isFile) jarPath.parent else jarPath

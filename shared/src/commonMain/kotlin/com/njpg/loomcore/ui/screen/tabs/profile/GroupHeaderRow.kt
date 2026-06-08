@@ -18,10 +18,12 @@ import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.model.PriceGroup
 
 @Composable
-fun GroupHeaderRow(
-    group: PriceGroup, onNameChange: (String) -> Unit, onDelete: () -> Unit
-) {
+fun GroupHeaderRow(group: PriceGroup, onNameChange: (String) -> Unit, onDelete: () -> Unit) {
     var name by remember(group.id) { mutableStateOf(group.name) }
+
+    LaunchedEffect(name) {
+        if (name != group.name) onNameChange(name)
+    }
 
     Row(
         modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f))
@@ -40,18 +42,9 @@ fun GroupHeaderRow(
             singleLine = true,
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             modifier = Modifier.weight(1f),
-            decorationBox = { inner ->
-                Box(Modifier.fillMaxWidth()) { inner() }
-            })
-
-        LaunchedEffect(name) {
-            if (name != group.name) onNameChange(name)
-        }
-
+            decorationBox = { inner -> Box(Modifier.fillMaxWidth()) { inner() } })
         IconButton(onClick = onDelete, modifier = Modifier.size(32.dp)) {
-            Icon(
-                Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp)
-            )
+            Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp))
         }
     }
 }

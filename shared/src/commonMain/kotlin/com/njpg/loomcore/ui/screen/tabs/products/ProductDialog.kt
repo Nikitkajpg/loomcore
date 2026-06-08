@@ -18,8 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.njpg.loomcore.core.DateVisualTransformation
-import com.njpg.loomcore.core.formatAsDate
 import com.njpg.loomcore.data.ImageStorage
 import com.njpg.loomcore.model.*
 import java.awt.FileDialog
@@ -31,8 +29,6 @@ fun ProductDialog(
     initial: Product?,
     nextId: Int,
     allMaterials: List<Material>,
-    allClients: List<Client>,
-    profile: Profile,
     onConfirm: (Product) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -41,8 +37,6 @@ fun ProductDialog(
     var name by remember { mutableStateOf(initial?.name ?: "") }
     var notes by remember { mutableStateOf(initial?.notes ?: "") }
     var workTimeHours by remember { mutableStateOf(initial?.workTimeHours?.toString() ?: "") }
-    var startDate by remember { mutableStateOf(initial?.startDate?.filter { it.isDigit() } ?: "") }
-    var endDate by remember { mutableStateOf(initial?.endDate?.filter { it.isDigit() } ?: "") }
 
     val existingPhotos = remember { mutableStateListOf(*(initial?.photoPaths?.toTypedArray() ?: emptyArray())) }
     val newSelectedPhotos = remember { mutableStateListOf<File>() }
@@ -52,20 +46,6 @@ fun ProductDialog(
             *(initial?.materialsUsed?.map { it.materialId to it.amount.toString() }?.toTypedArray() ?: emptyArray())
         )
     }
-
-    val selectedClientIds = remember { mutableStateSetOf(*(initial?.clientIds?.toTypedArray() ?: emptyArray())) }
-
-    val previewCost by remember(usageRows.toList(), workTimeHours) {
-        derivedStateOf {
-            val matCost = usageRows.sumOf { (matId, amountStr) ->
-                val mat = allMaterials.find { it.id == matId }
-                (mat?.costPerUnit ?: 0.0) * (amountStr.replace(',', '.').toDoubleOrNull() ?: 0.0)
-            }
-            val labor = (workTimeHours.replace(',', '.').toDoubleOrNull() ?: 0.0) * profile.hourlyRate
-            matCost + labor
-        }
-    }
-    val previewPrice = previewCost * (1.0 + profile.markupPercent / 100.0)
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -83,36 +63,6 @@ fun ProductDialog(
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
-                }
-                item {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        OutlinedTextField(
-                            value = startDate,
-                            onValueChange = { v ->
-                                val d = v.filter { it.isDigit() }
-                                if (d.length <= 8) startDate = d
-                            },
-                            label = { Text("Дата начала") },
-                            placeholder = { Text("ДД.ММ.ГГГГ") },
-                            singleLine = true,
-                            visualTransformation = DateVisualTransformation(),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            modifier = Modifier.weight(1f)
-                        )
-                        OutlinedTextField(
-                            value = endDate,
-                            onValueChange = { v ->
-                                val d = v.filter { it.isDigit() }
-                                if (d.length <= 8) endDate = d
-                            },
-                            label = { Text("Дата конца") },
-                            placeholder = { Text("ДД.ММ.ГГГГ") },
-                            singleLine = true,
-                            visualTransformation = DateVisualTransformation(),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
                 }
                 item {
                     OutlinedTextField(
@@ -148,47 +98,6 @@ fun ProductDialog(
                         Icon(Icons.Default.Add, null)
                         Spacer(Modifier.width(4.dp))
                         Text("Добавить материал")
-                    }
-                }
-
-                if (allClients.isNotEmpty()) {
-                    item {
-                        Spacer(Modifier.height(4.dp))
-                        Text("Покупатели", style = MaterialTheme.typography.labelLarge)
-                    }
-                    itemsIndexed(allClients) { _, client ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Checkbox(
-                                checked = client.id in selectedClientIds, onCheckedChange = { checked ->
-                                    if (checked) selectedClientIds.add(client.id)
-                                    else selectedClientIds.remove(client.id)
-                                })
-                            Text(client.name, style = MaterialTheme.typography.bodyMedium)
-                        }
-                    }
-                }
-
-                item {
-                    Spacer(Modifier.height(4.dp))
-                    HorizontalDivider()
-                    Spacer(Modifier.height(4.dp))
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Себестоимость:", style = MaterialTheme.typography.bodySmall)
-                        Text(
-                            "%.2f ${profile.defaultCurrency}".format(previewCost),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Цена (+${profile.markupPercent}%):", style = MaterialTheme.typography.bodySmall)
-                        Text(
-                            "%.2f ${profile.defaultCurrency}".format(previewPrice),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
                     }
                 }
 
@@ -247,14 +156,6 @@ fun ProductDialog(
                 val usages = usageRows.filter { (_, amt) -> amt.replace(',', '.').toDoubleOrNull() != null }
                     .map { (matId, amt) -> MaterialUsage(matId, amt.replace(',', '.').toDouble()) }
 
-                val matCost = usages.sumOf { usage ->
-                    val mat = allMaterials.find { it.id == usage.materialId }
-                    (mat?.costPerUnit ?: 0.0) * usage.amount
-                }
-                val labor = (workTimeHours.replace(',', '.').toDoubleOrNull() ?: 0.0) * profile.hourlyRate
-                val cachedCost = matCost + labor
-                val finalPrice = cachedCost * (1.0 + profile.markupPercent / 100.0)
-
                 val importedNewNames = newSelectedPhotos.map { ImageStorage.importPhoto(it.toPath()) }
                 val finalPhotoPaths = existingPhotos + importedNewNames
 
@@ -266,12 +167,7 @@ fun ProductDialog(
                         id = productId,
                         name = name.trim(),
                         materialsUsed = usages,
-                        clientIds = selectedClientIds.toList(),
                         workTimeHours = workTimeHours.replace(',', '.').toDoubleOrNull() ?: 0.0,
-                        startDate = formatAsDate(startDate).ifBlank { null },
-                        endDate = formatAsDate(endDate).ifBlank { null },
-                        cachedCost = cachedCost,
-                        finalPrice = finalPrice,
                         photoPaths = finalPhotoPaths,
                         notes = notes.trim()
                     )

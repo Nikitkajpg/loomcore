@@ -17,24 +17,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.core.rememberAsyncImageBitmap
 import com.njpg.loomcore.data.ImageStorage
-import com.njpg.loomcore.model.Client
 import com.njpg.loomcore.model.Material
 import com.njpg.loomcore.model.Product
 
 @Composable
-fun ProductCard(
-    product: Product,
-    allMaterials: List<Material>,
-    allClients: List<Client>,
-    currency: String,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit
-) {
+fun ProductCard(product: Product, allMaterials: List<Material>, onEdit: () -> Unit, onDelete: () -> Unit) {
     var isExpanded by remember { mutableStateOf(false) }
 
-    val previewFile = remember(product.photoPaths) {
-        ImageStorage.resolve(product.photoPaths.firstOrNull())?.toFile()
-    }
+    val previewFile = remember(product.photoPaths) { ImageStorage.resolve(product.photoPaths.firstOrNull())?.toFile() }
     val previewBitmap: ImageBitmap? = rememberAsyncImageBitmap(previewFile)
 
     Card(
@@ -43,73 +33,37 @@ fun ProductCard(
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier.size(64.dp).clip(RoundedCornerShape(8.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant), contentAlignment = Alignment.Center
                 ) {
                     if (previewBitmap != null) {
-                        Image(
-                            bitmap = previewBitmap,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
+                        Image(previewBitmap, null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
                     } else {
                         Icon(Icons.Default.Photo, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
 
-                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(product.name, style = MaterialTheme.typography.titleMedium)
-                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        Column {
-                            Text(
-                                "Себестоимость",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                "%.2f %s".format(product.cachedCost, currency),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                        Column {
-                            Text(
-                                "Цена",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                "%.2f %s".format(product.finalPrice, currency),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
                 }
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    IconButton(onClick = { onEdit(); }) {
-                        Icon(Icons.Default.Edit, contentDescription = "Редактировать")
-                    }
+                    IconButton(onClick = onEdit) { Icon(Icons.Default.Edit, "Редактировать") }
                     IconButton(onClick = onDelete) {
                         Icon(
-                            Icons.Default.Delete, contentDescription = "Удалить", tint = MaterialTheme.colorScheme.error
+                            Icons.Default.Delete, "Удалить", tint = MaterialTheme.colorScheme.error
                         )
                     }
                     Icon(
                         if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                        contentDescription = null,
+                        null,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
-
-            ExtendedCardPart(product, allMaterials, allClients, isExpanded)
+            ExtendedCardPart(product, allMaterials, isExpanded)
         }
     }
 }

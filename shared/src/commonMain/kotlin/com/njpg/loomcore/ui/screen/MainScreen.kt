@@ -14,9 +14,11 @@ import com.njpg.loomcore.ui.screen.tabs.materials.MaterialsTab
 import com.njpg.loomcore.ui.screen.tabs.products.ProductsTab
 import com.njpg.loomcore.ui.screen.tabs.profile.ProfileTab
 import com.njpg.loomcore.ui.screen.tabs.suppliers.SuppliersTab
+import com.njpg.loomcore.ui.screen.tabs.orders.OrdersTab
 import com.njpg.loomcore.viewmodel.*
 
 private val TAB_ITEMS = listOf(
+    TabItem("Заказы", Icons.Default.Star),
     TabItem("Изделия", Icons.Default.Store),
     TabItem("Материалы", Icons.Default.Layers),
     TabItem("Поставщики", Icons.Default.ShoppingCart),
@@ -31,6 +33,7 @@ fun MainScreen() {
     val suppliersVm: SuppliersViewModel = viewModel { SuppliersViewModel() }
     val clientsVm: ClientsViewModel = viewModel { ClientsViewModel() }
     val profileVm: ProfileViewModel = viewModel { ProfileViewModel() }
+    val ordersVm: OrdersViewModel = viewModel { OrdersViewModel() }
 
     var selectedTab by remember { mutableStateOf(0) }
 
@@ -54,11 +57,12 @@ fun MainScreen() {
             HorizontalDivider(modifier = Modifier.fillMaxHeight().width(1.dp))
             Box(modifier = Modifier.fillMaxSize()) {
                 when (selectedTab) {
-                    0 -> ProductsTab(productsVm, materialsVm, clientsVm, profileVm)
-                    1 -> MaterialsTab(materialsVm, suppliersVm, productsVm)
-                    2 -> SuppliersTab(suppliersVm, materialsVm)
-                    3 -> ClientsTab(clientsVm, productsVm)
-                    4 -> ProfileTab(profileVm)
+                    0 -> OrdersTab(ordersVm, clientsVm, materialsVm, productsVm, profileVm)
+                    1 -> ProductsTab(productsVm, materialsVm)
+                    2 -> MaterialsTab(materialsVm, suppliersVm, productsVm)
+                    3 -> SuppliersTab(suppliersVm, materialsVm)
+                    4 -> ClientsTab(clientsVm)
+                    5 -> ProfileTab(profileVm)
                 }
             }
         }

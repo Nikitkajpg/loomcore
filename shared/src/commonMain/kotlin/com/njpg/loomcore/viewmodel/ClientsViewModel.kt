@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 class ClientsViewModel : ViewModel() {
 
     private val repo = JsonRepository(
-        Paths.clientsFile, Client.serializer(), getId = { it.id })
+        file = Paths.clientsFile, serializer = Client.serializer(), getId = { it.id })
 
     private val _clients = MutableStateFlow<List<Client>>(emptyList())
     val clients = _clients.asStateFlow()

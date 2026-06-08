@@ -36,5 +36,4 @@ class MaterialsViewModel : ViewModel() {
     }
 
     fun nextId(): Int = repo.nextId(_materials.value)
-
 }

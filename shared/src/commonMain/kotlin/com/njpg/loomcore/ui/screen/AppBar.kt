@@ -23,12 +23,7 @@ fun AppBar() {
             modifier = Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "LoomCore",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
+            Text("LoomCore", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
         }
     }
 }

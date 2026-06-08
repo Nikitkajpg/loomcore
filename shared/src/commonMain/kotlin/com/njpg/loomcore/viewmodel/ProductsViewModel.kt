@@ -32,8 +32,7 @@ class ProductsViewModel : ViewModel() {
     }
 
     fun delete(id: Int) {
-        val product = _products.value.find { it.id == id }
-        product?.photoPaths?.forEach { ImageStorage.deletePhoto(it) }
+        _products.value.find { it.id == id }?.photoPaths?.forEach { ImageStorage.deletePhoto(it) }
         _products.update { list -> list.filter { it.id != id } }
         repo.saveAll(_products.value)
     }

@@ -73,7 +73,6 @@ fun PriceListTable(vm: PriceListViewModel, modifier: Modifier = Modifier) {
                             onNameChange = { vm.updateGroupName(group.id, it) },
                             onDelete = { vm.deleteGroup(group.id) })
                     }
-
                     items(group.rows, key = { "row-${group.id}-${it.id}" }) { row ->
                         ServiceRow(
                             row = row,
@@ -81,7 +80,6 @@ fun PriceListTable(vm: PriceListViewModel, modifier: Modifier = Modifier) {
                             onDelete = { vm.deleteRow(group.id, row.id) })
                         HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
                     }
-
                     item(key = "add-row-${group.id}") {
                         TextButton(
                             onClick = { vm.addRow(group.id) }, modifier = Modifier.padding(start = 8.dp)

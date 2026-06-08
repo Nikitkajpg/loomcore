@@ -7,7 +7,6 @@ import com.njpg.loomcore.ui.screen.MainScreen
 import com.njpg.loomcore.ui.screen.Screen
 import com.njpg.loomcore.ui.screen.SplashScreen
 
-
 @Composable
 fun App() {
     MaterialTheme(colorScheme = darkColorScheme()) {
