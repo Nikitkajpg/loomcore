@@ -4,7 +4,8 @@ A desktop application for accounting and management of sewing production.
 
 ## Features
 
-- **Products** — track finished goods, their cost, selling price, and production time
+- **Orders** - track orders, date, type, selling price and production time
+- **Products** — track finished goods, their cost and materials
 - **Materials** — manage fabric and other materials with price per unit
 - **Customers** — store customer contacts and link them to orders
 - **Suppliers** — keep supplier information linked to materials
