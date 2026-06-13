@@ -39,7 +39,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Order(
-    val id: Int,
+    override val id: Int,
     val type: OrderType = OrderType.PRODUCT,
     val clientId: Int? = null,
     val status: OrderStatus = OrderStatus.IN_PROGRESS,
@@ -54,4 +54,4 @@ data class Order(
     val repairOperations: List<RepairOperation> = emptyList(),
     val repairTotalPrice: Double = 0.0,
     val notes: String = ""
-)
+) : HasId

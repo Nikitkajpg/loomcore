@@ -5,9 +5,6 @@ import kotlinx.serialization.Serializable
 /**
  * Покупатель / заказчик.
  *
- * Используется для привязки заказов к конкретному человеку.
- * Все поля, кроме [id] и [name], необязательны.
- *
  * @property id          Уникальный числовой идентификатор (генерируется репозиторием).
  * @property name        Имя или название организации.
  * @property phoneNumber Контактный телефон в произвольном формате.
@@ -16,9 +13,9 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Client(
-    val id: Int,
+    override val id: Int,
     val name: String,
     val phoneNumber: String = "",
     val url: String = "",
     val notes: String = ""
-)
+) : HasId
