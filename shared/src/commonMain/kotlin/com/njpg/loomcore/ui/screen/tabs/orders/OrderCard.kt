@@ -18,6 +18,27 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.model.*
 
+/**
+ * Карточка заказа в списке раздела "Заказы".
+ *
+ * Поддерживает два состояния: свёрнутое (показывает статус, клиент, дату, цену)
+ * и развёрнутое (добавляет детали — список материалов или список операций ремонта).
+ * Переключение — клик по всей карточке.
+ *
+ * ## Визуальное отличие типов
+ * - Пошив [OrderType.PRODUCT]: полоска и бейдж — `primary` цвет, цена отображает
+ *   себестоимость и итоговую цену.
+ * - Ремонт [OrderType.REPAIR]: полоска и бейдж — `tertiary` цвет, отображается
+ *   итоговая сумма ремонта [Order.repairTotalPrice].
+ *
+ * @param order     Отображаемый заказ.
+ * @param clients   Список клиентов для поиска имени по [Order.clientId].
+ * @param materials Список материалов для отображения деталей в развёрнутом виде.
+ * @param products  Список изделий для формирования заголовка через [orderTitle].
+ * @param currency  Символ валюты из профиля.
+ * @param onEdit    Открывает [OrderDialog] для редактирования.
+ * @param onDelete  Открывает [ConfirmDeleteDialog] для удаления.
+ */
 @Composable
 fun OrderCard(
     order: Order,
@@ -128,75 +149,7 @@ fun OrderCard(
             }
 
             AnimatedVisibility(visible = expanded) {
-                Column(modifier = Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    HorizontalDivider(modifier = Modifier.padding(bottom = 4.dp))
-                    when (order.type) {
-                        OrderType.PRODUCT -> {
-                            if (order.materialsUsed.isNotEmpty()) {
-                                Text(
-                                    "Материалы:",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                order.materialsUsed.forEach { usage ->
-                                    val mat = materials.find { it.id == usage.materialId }
-                                    Text(
-                                        "  ${mat?.name ?: "?"} × ${usage.amount} ${mat?.unitName ?: ""}",
-                                        style = MaterialTheme.typography.bodySmall
-                                    )
-                                }
-                            }
-                            if (order.workTimeHours > 0) {
-                                Text("Время: ${order.workTimeHours} ч.", style = MaterialTheme.typography.bodySmall)
-                            }
-                        }
-
-                        OrderType.REPAIR -> {
-                            if (order.repairOperations.isNotEmpty()) {
-                                Text(
-                                    "Операции:",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                order.repairOperations.forEach { op ->
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth().padding(start = 8.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween
-                                    ) {
-                                        Text(
-                                            "${op.name} × ${op.quantity}",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                        Text(
-                                            "%.2f $currency".format(op.totalPrice),
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.tertiary
-                                        )
-                                    }
-                                }
-                                HorizontalDivider(modifier = Modifier.padding(vertical = 2.dp))
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text("Итого:", style = MaterialTheme.typography.labelSmall)
-                                    Text(
-                                        "%.2f $currency".format(order.repairTotalPrice),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.tertiary
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    if (order.notes.isNotBlank()) {
-                        Text(
-                            order.notes,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+                ExpandedOrderCard(order, materials, currency)
             }
         }
     }

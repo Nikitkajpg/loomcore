@@ -9,12 +9,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
+/**
+ * ViewModel для раздела "Изделия".
+ *
+ * Особенность: при удалении изделия автоматически удаляются
+ * связанные фотографии из [ImageStorage], чтобы не накапливать
+ * «осиротевшие» файлы в папке img.
+ */
 class ProductsViewModel : ViewModel() {
 
     private val repo = JsonRepository(
         file = Paths.productsFile, serializer = Product.serializer(), getId = { it.id })
 
     private val _products = MutableStateFlow<List<Product>>(emptyList())
+
+    /** Реактивный список изделий. */
     val products = _products.asStateFlow()
 
     init {
@@ -31,6 +40,11 @@ class ProductsViewModel : ViewModel() {
         repo.saveAll(_products.value)
     }
 
+    /**
+     * Удаляет изделие и все его фотографии с диска.
+     *
+     * @param id  Идентификатор удаляемого изделия.
+     */
     fun delete(id: Int) {
         _products.value.find { it.id == id }?.photoPaths?.forEach { ImageStorage.deletePhoto(it) }
         _products.update { list -> list.filter { it.id != id } }

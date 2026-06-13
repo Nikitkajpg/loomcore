@@ -13,6 +13,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.model.Material
 
+/**
+ * Строка выбора материала и его количества в [ProductDialog] и [OrderDialog].
+ *
+ * @param materialId       Идентификатор выбранного материала.
+ * @param amount           Строковое количество материала.
+ * @param allMaterials     Список всех материалов для заполнения выпадающего списка.
+ * @param onMaterialChange Вызывается при выборе другого материала с его id.
+ * @param onAmountChange   Вызывается при изменении строки количества.
+ * @param onDelete         Вызывается при нажатии кнопки удаления строки.
+ */
 @Composable
 fun MaterialUsageRow(
     materialId: Int,

@@ -11,6 +11,18 @@ import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.model.Material
 import com.njpg.loomcore.model.Supplier
 
+/**
+ * Диалог создания и редактирования Материала.
+ *
+ * При создании [initial] = null, при редактировании — содержит
+ * текущие данные материала. Поле [nextId] используется только при создании.
+ *
+ * @param title      Заголовок диалога.
+ * @param initial    Текущие данные для режима редактирования, null для создания.
+ * @param nextId     Идентификатор для нового материала (от [com.njpg.loomcore.viewmodel.MaterialsViewModel.nextId]).
+ * @param onConfirm  Вызывается при нажатии "Сохранить" с готовым объектом [Material].
+ * @param onDismiss  Вызывается при отмене или закрытии диалога.
+ */
 @Composable
 fun MaterialDialog(
     title: String,

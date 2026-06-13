@@ -25,6 +25,20 @@ import com.njpg.loomcore.data.ImageStorage
 import com.njpg.loomcore.model.Material
 import com.njpg.loomcore.model.Product
 
+/**
+ * Развёрнутая часть карточки изделия — отображается при [isExpanded] == true.
+ *
+ * Анимирована через [AnimatedVisibility] для плавного появления/скрытия.
+ * Разделена на две колонки:
+ *
+ * - **Левая** — текстовые детали: время пошива, материалы, заметки.
+ * - **Правая** — горизонтальная галерея фотографий.
+ *   При наведении на миниатюру показывается полноразмерное фото через
+ *
+ * @param product     Изделие, данные которого отображаются.
+ * @param allMaterials Список всех материалов — для поиска названия по id.
+ * @param isExpanded  Флаг видимости развёрнутой части.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExtendedCardPart(product: Product, allMaterials: List<Material>, isExpanded: Boolean) {

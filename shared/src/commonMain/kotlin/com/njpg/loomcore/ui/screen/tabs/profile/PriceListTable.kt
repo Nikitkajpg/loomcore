@@ -16,6 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.viewmodel.PriceListViewModel
 
+/**
+ * Таблица прейскуранта ремонтных услуг.
+ *
+ * @param vm        ViewModel прейскуранта с методами CRUD групп и строк.
+ * @param modifier  Модификатор из [ProfileTab].
+ */
 @Composable
 fun PriceListTable(vm: PriceListViewModel, modifier: Modifier = Modifier) {
     val groups by vm.groups.collectAsState()

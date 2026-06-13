@@ -13,6 +13,16 @@ import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.model.Material
 import com.njpg.loomcore.model.Supplier
 
+/**
+ * Карточка материала в списке раздела "Материалы".
+ *
+ * Отображает название, цену за единицу, поставщика (если есть) и заметки.
+ *
+ * @param material   Отображаемый материал.
+ * @param supplier   Поставщик этого материала (из [Material.supplierId]), или null.
+ * @param onEdit     Открывает [MaterialDialog] для редактирования.
+ * @param onDelete   Открывает [ConfirmDeleteDialog] для удаления.
+ */
 @Composable
 fun MaterialCard(
     material: Material, supplier: Supplier?, onEdit: () -> Unit, onDelete: () -> Unit

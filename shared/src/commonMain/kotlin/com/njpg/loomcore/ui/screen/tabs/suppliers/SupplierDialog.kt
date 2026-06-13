@@ -12,7 +12,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.model.Supplier
 
-
+/**
+ * Диалог создания и редактирования поставщика.
+ *
+ * @param title      Заголовок диалога.
+ * @param initial    Данные для редактирования, null для создания.
+ * @param nextId     Идентификатор нового поставщика (от [SuppliersViewModel.nextId]).
+ * @param onConfirm  Вызывается с готовым [Supplier] при сохранении.
+ * @param onDismiss  Вызывается при отмене.
+ */
 @Composable
 fun SupplierDialog(
     title: String, initial: Supplier?, nextId: Int, onConfirm: (Supplier) -> Unit, onDismiss: () -> Unit

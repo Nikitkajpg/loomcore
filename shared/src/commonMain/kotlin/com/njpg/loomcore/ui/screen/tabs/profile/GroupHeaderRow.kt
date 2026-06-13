@@ -17,6 +17,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.model.PriceGroup
 
+/**
+ * Строка-заголовок группы прейскуранта в [PriceListTable].
+ *
+ * @param group         Группа прейскуранта, заголовок которой редактируется.
+ * @param onNameChange  Вызывается с новым названием при каждом изменении.
+ * @param onDelete      Вызывается при нажатии кнопки удаления группы.
+ */
 @Composable
 fun GroupHeaderRow(group: PriceGroup, onNameChange: (String) -> Unit, onDelete: () -> Unit) {
     var name by remember(group.id) { mutableStateOf(group.name) }

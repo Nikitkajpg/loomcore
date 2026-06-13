@@ -11,6 +11,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * Общий шаблон для всех вкладок со списком сущностей.
+ *
+ * Инкапсулирует повторяющийся паттерн:
+ * - Кнопка "+" для добавления новой записи.
+ * - Сообщение-заглушка при пустом списке.
+ * - Прокручиваемый список карточек.
+ *
+ * Используется в [ClientsTab], [SuppliersTab], [MaterialsTab],
+ * [ProductsTab] и [OrdersTab].
+ *
+ * @param isEmpty      true, если список данных пуст — показывается [emptyText].
+ * @param emptyText    Текст-подсказка при пустом списке.
+ * @param onAdd        Вызывается при нажатии на FAB.
+ * @param listContent  Лямбда с содержимым [LazyColumn] (items, item и т.д.).
+ */
 @Composable
 fun TabScaffold(
     isEmpty: Boolean, emptyText: String, onAdd: () -> Unit, listContent: LazyListScope.() -> Unit

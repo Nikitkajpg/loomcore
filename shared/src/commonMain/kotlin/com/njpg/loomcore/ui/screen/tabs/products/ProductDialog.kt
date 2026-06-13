@@ -19,18 +19,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.data.ImageStorage
-import com.njpg.loomcore.model.*
+import com.njpg.loomcore.model.Material
+import com.njpg.loomcore.model.MaterialUsage
+import com.njpg.loomcore.model.Product
 import java.awt.FileDialog
 import java.awt.Frame
 import java.io.File
 
+/**
+ * Диалог создания и редактирования изделия (шаблона заказа).
+ *
+ * @param initial      Существующее изделие при редактировании, `null` при создании.
+ * @param nextId       Следующий свободный id — используется только для новых изделий.
+ * @param allMaterials Список всех материалов для заполнения [MaterialUsageRow].
+ * @param onConfirm    Вызывается с готовым объектом [Product] при нажатии "Сохранить".
+ * @param onDismiss    Вызывается при отмене или закрытии диалога.
+ */
 @Composable
 fun ProductDialog(
-    initial: Product?,
-    nextId: Int,
-    allMaterials: List<Material>,
-    onConfirm: (Product) -> Unit,
-    onDismiss: () -> Unit
+    initial: Product?, nextId: Int, allMaterials: List<Material>, onConfirm: (Product) -> Unit, onDismiss: () -> Unit
 ) {
     val productId = initial?.id ?: nextId
 

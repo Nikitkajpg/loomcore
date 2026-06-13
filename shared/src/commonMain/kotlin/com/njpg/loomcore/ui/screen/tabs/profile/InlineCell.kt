@@ -11,6 +11,13 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
+/**
+ * Минималистичное редактируемое поле ввода для ячейки таблицы прейскуранта.
+ *
+ * @param value          Текущее значение поля.
+ * @param onValueChange  Вызывается при каждом изменении текста.
+ * @param modifier       Модификатор размера и отступов (задаётся снаружи).
+ */
 @Composable
 fun InlineCell(value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
     BasicTextField(

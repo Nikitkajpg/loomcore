@@ -12,7 +12,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.model.Client
 
-
+/**
+ * Диалог создания и редактирования клиента.
+ *
+ * При создании [initial] = null, при редактировании — содержит
+ * текущие данные клиента. Поле [nextId] используется только при создании.
+ *
+ * @param title      Заголовок диалога.
+ * @param initial    Текущие данные для режима редактирования, null для создания.
+ * @param nextId     Идентификатор для нового клиента (от [ClientsViewModel.nextId]).
+ * @param onConfirm  Вызывается при нажатии "Сохранить" с готовым объектом [Client].
+ * @param onDismiss  Вызывается при отмене или закрытии диалога.
+ */
 @Composable
 fun ClientDialog(
     title: String, initial: Client?, nextId: Int, onConfirm: (Client) -> Unit, onDismiss: () -> Unit

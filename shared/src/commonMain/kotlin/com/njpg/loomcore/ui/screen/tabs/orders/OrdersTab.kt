@@ -10,12 +10,30 @@ import com.njpg.loomcore.ui.library.ConfirmDeleteDialog
 import com.njpg.loomcore.ui.screen.tabs.TabScaffold
 import com.njpg.loomcore.viewmodel.*
 
+/**
+ * Цвета меток статусов заказов.
+ *
+ * Применяются как в [OrderCard], так и в [OrderDialog].
+ * Используется [statusColor][order.status] для получения нужного цвета.
+ */
 val statusColor: Map<OrderStatus, Color> = mapOf(
     OrderStatus.IN_PROGRESS to Color(0xFF1976D2),
     OrderStatus.DONE to Color(0xFF388E3C),
     OrderStatus.CANCELLED to Color(0xFF757575)
 )
 
+/**
+ * Вкладка "Заказы" — список заказов с CRUD-операциями.
+ *
+ * Инициализирует [PriceListViewModel] для передачи прейскуранта операций ремонта
+ * в [OrderDialog] — это необходимо для автозаполнения при выборе операции.
+ *
+ * @param vm          ViewModel заказов.
+ * @param clientsVm   ViewModel клиентов — для выбора заказчика.
+ * @param materialsVm ViewModel материалов — для расчёта себестоимости.
+ * @param productsVm  ViewModel изделий — для выбора шаблона заказа.
+ * @param profileVm   ViewModel профиля — для ставки часа и наценки.
+ */
 @Composable
 fun OrdersTab(
     vm: OrdersViewModel,
@@ -47,7 +65,7 @@ fun OrdersTab(
     if (showDialog) {
         OrderDialog(
             initial = editTarget,
-            nextId = vm.nextId,
+            nextId = vm.nextId(),
             allClients = clients,
             allMaterials = materials,
             allProducts = products,

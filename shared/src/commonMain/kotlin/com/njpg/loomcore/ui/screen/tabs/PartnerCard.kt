@@ -11,6 +11,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * Универсальная карточка контрагента (клиента или поставщика).
+ *
+ * Отображает имя жирным заголовком, а под ним — произвольные строки
+ * (телефон, ссылка, заметки). Пустые строки автоматически пропускаются.
+ *
+ * Повторно используется в [ClientCard] и [SupplierCard],
+ * чтобы не дублировать разметку.
+ *
+ * @param name      Главное название (клиент или поставщик).
+ * @param lines     Список дополнительных строк для отображения.
+ * @param onEdit    Вызывается при нажатии кнопки редактирования.
+ * @param onDelete  Вызывается при нажатии кнопки удаления.
+ */
 @Composable
 fun PartnerCard(
     name: String, lines: List<String>, onEdit: () -> Unit, onDelete: () -> Unit

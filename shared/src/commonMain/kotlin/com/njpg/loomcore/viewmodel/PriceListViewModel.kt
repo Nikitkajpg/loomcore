@@ -13,9 +13,17 @@ import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
+/**
+ * ViewModel прейскуранта ремонтных услуг.
+ *
+ * Не использует [JsonRepository] (тот рассчитан на плоские списки),
+ * поэтому сериализация реализована напрямую через [AppJson].
+ */
 class PriceListViewModel : ViewModel() {
 
     private val _groups = MutableStateFlow<List<PriceGroup>>(emptyList())
+
+    /** Реактивный список групп прейскуранта. */
     val groups = _groups.asStateFlow()
 
     init {
@@ -29,6 +37,7 @@ class PriceListViewModel : ViewModel() {
         }
     }
 
+    /** Сохраняет текущий список групп на диск. Вызывается после каждой мутации. */
     private fun save() {
         Paths.priceListFile.writeText(AppJson.encodeToString(ListSerializer(PriceGroup.serializer()), _groups.value))
     }
@@ -36,21 +45,25 @@ class PriceListViewModel : ViewModel() {
     private fun nextGroupId() = (_groups.value.maxOfOrNull { it.id } ?: 0) + 1
     private fun nextRowId(group: PriceGroup) = (group.rows.maxOfOrNull { it.id } ?: 0) + 1
 
+    /** Добавляет новую группу. */
     fun addGroup() {
         _groups.update { it + PriceGroup(id = nextGroupId(), name = "Новая группа") }
         save()
     }
 
+    /** Переименовывает группу с указанным [groupId]. */
     fun updateGroupName(groupId: Int, name: String) {
         _groups.update { list -> list.map { if (it.id == groupId) it.copy(name = name) else it } }
         save()
     }
 
+    /** Удаляет группу вместе со всеми её строками. */
     fun deleteGroup(groupId: Int) {
         _groups.update { it.filter { g -> g.id != groupId } }
         save()
     }
 
+    /** Добавляет новую строку-операцию в группу [groupId]. */
     fun addRow(groupId: Int) {
         _groups.update { list ->
             list.map { g ->
@@ -65,6 +78,7 @@ class PriceListViewModel : ViewModel() {
         save()
     }
 
+    /** Обновляет строку [row] в группе [groupId] (ищет по [PriceRow.id]). */
     fun updateRow(groupId: Int, row: PriceRow) {
         _groups.update { list ->
             list.map { g ->
@@ -75,6 +89,7 @@ class PriceListViewModel : ViewModel() {
         save()
     }
 
+    /** Удаляет строку с [rowId] из группы [groupId]. */
     fun deleteRow(groupId: Int, rowId: Int) {
         _groups.update { list ->
             list.map { g ->

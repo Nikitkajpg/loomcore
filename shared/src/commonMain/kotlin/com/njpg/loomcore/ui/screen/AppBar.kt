@@ -14,6 +14,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * Верхняя панель приложения с логотипом.
+ *
+ * Отображает название приложения "LoomCore" и занимает всю ширину окна.
+ * Используется как статичный заголовок в [MainScreen].
+ */
 @Composable
 fun AppBar() {
     Surface(

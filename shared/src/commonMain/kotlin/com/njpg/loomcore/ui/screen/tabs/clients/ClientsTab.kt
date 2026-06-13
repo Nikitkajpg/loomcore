@@ -6,6 +6,16 @@ import com.njpg.loomcore.model.Client
 import com.njpg.loomcore.ui.screen.tabs.TabScaffold
 import com.njpg.loomcore.viewmodel.ClientsViewModel
 
+/**
+ * Вкладка "Покупатели" — список клиентов с CRUD-операциями.
+ *
+ * ## Состояние UI
+ * - [showDialog]    — открыт ли диалог создания/редактирования.
+ * - [editTarget]    — клиент для редактирования (null = создание нового).
+ * - [itemToDelete]  — клиент, ожидающий подтверждения удаления.
+ *
+ * @param vm  ViewModel с реактивным списком клиентов и методами CRUD.
+ */
 @Composable
 fun ClientsTab(vm: ClientsViewModel) {
     val clients by vm.clients.collectAsState()

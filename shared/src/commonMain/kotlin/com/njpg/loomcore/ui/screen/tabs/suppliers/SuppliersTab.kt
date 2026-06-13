@@ -8,6 +8,16 @@ import com.njpg.loomcore.ui.screen.tabs.TabScaffold
 import com.njpg.loomcore.viewmodel.MaterialsViewModel
 import com.njpg.loomcore.viewmodel.SuppliersViewModel
 
+/**
+ * Вкладка "Поставщики" — список поставщиков с CRUD-операциями.
+ *
+ * При удалении поставщика проверяется, привязаны ли к нему материалы.
+ * Если да — в [ConfirmDeleteDialog] выводится предупреждение со списком
+ * затронутых материалов.
+ *
+ * @param vm          ViewModel поставщиков.
+ * @param materialsVm ViewModel материалов — используется для проверки связей при удалении.
+ */
 @Composable
 fun SuppliersTab(vm: SuppliersViewModel, materialsVm: MaterialsViewModel) {
     val suppliers by vm.suppliers.collectAsState()

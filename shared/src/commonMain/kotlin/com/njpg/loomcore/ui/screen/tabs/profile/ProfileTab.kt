@@ -15,6 +15,11 @@ import com.njpg.loomcore.viewmodel.PriceListViewModel
 import com.njpg.loomcore.viewmodel.ProfileViewModel
 import kotlinx.coroutines.delay
 
+/**
+ * Вкладка "Профиль" — настройки производителя и прейскурант услуг.
+ *
+ * @param vm  ViewModel профиля.
+ */
 @Composable
 fun ProfileTab(vm: ProfileViewModel) {
     val profile by vm.profile.collectAsState()

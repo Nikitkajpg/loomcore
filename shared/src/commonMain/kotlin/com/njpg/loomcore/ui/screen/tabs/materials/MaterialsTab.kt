@@ -9,6 +9,16 @@ import com.njpg.loomcore.viewmodel.MaterialsViewModel
 import com.njpg.loomcore.viewmodel.ProductsViewModel
 import com.njpg.loomcore.viewmodel.SuppliersViewModel
 
+/**
+ * Вкладка "Материалы" — справочник материалов с CRUD-операциями.
+ *
+ * При удалении материала проверяется, используется ли он в каких-либо изделиях.
+ * Если да — в [ConfirmDeleteDialog] выводится предупреждение.
+ *
+ * @param vm          ViewModel материалов.
+ * @param suppliersVm ViewModel поставщиков — передаётся в [MaterialDialog] для выбора поставщика.
+ * @param productsVm  ViewModel изделий — используется для проверки зависимостей при удалении.
+ */
 @Composable
 fun MaterialsTab(vm: MaterialsViewModel, suppliersVm: SuppliersViewModel, productsVm: ProductsViewModel) {
     val materials by vm.materials.collectAsState()

@@ -12,6 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.njpg.loomcore.model.PriceRow
 
+/**
+ * Строка одной операции прейскуранта в [PriceListTable].
+ *
+ * @param row       Текущие данные строки.
+ * @param onUpdate  Вызывается при изменении любого поля с обновлённым [PriceRow].
+ * @param onDelete  Вызывается при нажатии кнопки удаления строки.
+ */
 @Composable
 fun ServiceRow(row: PriceRow, onUpdate: (PriceRow) -> Unit, onDelete: () -> Unit) {
     var service by remember(row.id) { mutableStateOf(row.service) }

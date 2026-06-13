@@ -11,12 +11,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.njpg.loomcore.ui.screen.tabs.TabItem
 import com.njpg.loomcore.ui.screen.tabs.clients.ClientsTab
 import com.njpg.loomcore.ui.screen.tabs.materials.MaterialsTab
+import com.njpg.loomcore.ui.screen.tabs.orders.OrdersTab
 import com.njpg.loomcore.ui.screen.tabs.products.ProductsTab
 import com.njpg.loomcore.ui.screen.tabs.profile.ProfileTab
 import com.njpg.loomcore.ui.screen.tabs.suppliers.SuppliersTab
-import com.njpg.loomcore.ui.screen.tabs.orders.OrdersTab
 import com.njpg.loomcore.viewmodel.*
 
+/**
+ * Список вкладок боковой навигационной панели.
+ * Порядок элементов соответствует индексам в [MainScreen].
+ */
 private val TAB_ITEMS = listOf(
     TabItem("Заказы", Icons.Default.Star),
     TabItem("Изделия", Icons.Default.Store),
@@ -26,6 +30,18 @@ private val TAB_ITEMS = listOf(
     TabItem("Профиль", Icons.Default.Settings),
 )
 
+/**
+ * Главный экран приложения с боковой навигацией и областью контента.
+ *
+ * ## Архитектура
+ * Все ViewModel создаются здесь один раз и передаются вниз по дереву
+ * Composable. Это гарантирует, что одни и те же данные (например, список
+ * материалов) видны как в разделе "Материалы", так и в "Заказах".
+ *
+ * ## Навигация
+ * Реализована через [NavigationRail] (вертикальная панель слева).
+ * Состояние [selectedTab] — индекс активной вкладки.
+ */
 @Composable
 fun MainScreen() {
     val productsVm: ProductsViewModel = viewModel { ProductsViewModel() }

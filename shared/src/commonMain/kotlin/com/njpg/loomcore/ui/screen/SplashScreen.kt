@@ -21,14 +21,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
+/**
+ * Экран-заставка с анимацией при запуске приложения.
+ *
+ * @param onFinished  Коллбэк, вызываемый по завершении анимации.
+ */
 @Composable
 fun SplashScreen(onFinished: () -> Unit) {
     val scale = remember { Animatable(0.8f) }
     val alpha = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
+        /** Плавное появление */
         alpha.animateTo(1f, tween(300, easing = FastOutSlowInEasing))
+        /** Медленное увеличение */
         scale.animateTo(1.15f, tween(1000, easing = FastOutSlowInEasing))
+        /** Пауза */
         delay(300)
         onFinished()
     }

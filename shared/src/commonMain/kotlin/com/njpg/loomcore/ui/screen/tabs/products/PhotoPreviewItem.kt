@@ -23,6 +23,12 @@ import androidx.compose.ui.unit.dp
 import java.io.File
 import javax.imageio.ImageIO
 
+/**
+ * Миниатюра фотографии с кнопкой удаления в строке [LazyRow] в [ProductDialog].
+ *
+ * @param file      Файл изображения. Если `null` или не существует — показывает заглушку.
+ * @param onDelete  Вызывается при нажатии кнопки "х" — удаляет эту миниатюру из списка.
+ */
 @Composable
 fun PhotoPreviewItem(file: File?, onDelete: () -> Unit) {
     val bitmap: ImageBitmap? = remember(file) {

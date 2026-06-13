@@ -10,6 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * Вспомогательный компонент: строка «метка + содержимое» в [ExtendedCardPart].
+ *
+ * @param label    Текст метки.
+ * @param content  Composable с основным содержимым.
+ */
 @Composable
 fun LabeledRow(label: String, content: @Composable () -> Unit) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {

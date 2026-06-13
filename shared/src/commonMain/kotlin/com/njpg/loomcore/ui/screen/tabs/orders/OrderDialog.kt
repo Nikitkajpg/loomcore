@@ -19,8 +19,37 @@ import com.njpg.loomcore.core.formatAsDate
 import com.njpg.loomcore.model.*
 import com.njpg.loomcore.ui.screen.tabs.products.MaterialUsageRow
 
+/**
+ * Расширение String: заменяет запятую на точку и конвертирует в Double.
+ * Используется для числовых полей (цены, количество), где пользователь
+ * может вводить как "1.5", так и "1,5".
+ */
 private fun String.toDoubleLocale() = replace(',', '.').toDoubleOrNull()
 
+/**
+ * Диалог создания и редактирования заказа.
+ *
+ * Поддерживает два типа заказа ([OrderType]):
+ * - **PRODUCT (Пошив)**.
+ * - **REPAIR (Ремонт)**.
+ *
+ * ## Вычисление цен в реальном времени
+ * - [previewCost] — себестоимость пошива: сумма (цена за ед. × кол-во) по
+ *   материалам + часы × ставка часа из профиля. Обёрнуто в [derivedStateOf]
+ *   для пересчёта только при изменении зависимостей.
+ * - [previewPrice] — итоговая цена: `cost × (1 + markupPercent / 100)`.
+ * - [repairTotal] — сумма по операциям ремонта: `unitPrice × quantity`.
+ *
+ * @param initial        Существующий заказ при редактировании, `null` при создании.
+ * @param nextId         Следующий свободный id — используется только для новых заказов.
+ * @param allClients     Список клиентов для выбора заказчика.
+ * @param allMaterials   Список материалов для строк [MaterialUsageRow] и расчёта цен.
+ * @param allProducts    Список изделий для выбора шаблона.
+ * @param allPriceGroups Группы прейскуранта для выбора операций ремонта.
+ * @param profile        Профиль производителя — ставка часа, наценка, валюта.
+ * @param onConfirm      Вызывается с готовым [Order] при нажатии "Сохранить".
+ * @param onDismiss      Вызывается при отмене или закрытии.
+ */
 @Composable
 fun OrderDialog(
     initial: Order?,
@@ -46,13 +75,6 @@ fun OrderDialog(
             *(initial?.materialsUsed?.map { it.materialId to it.amount.toString() }?.toTypedArray() ?: emptyArray())
         )
     }
-
-    data class RepairRow(
-        val priceRowId: Int?,
-        val name: String,
-        val quantity: String,
-        val unitPrice: String,
-    )
 
     val repairRows = remember {
         mutableStateListOf(

@@ -9,6 +9,12 @@ import com.njpg.loomcore.ui.screen.tabs.products.card.ProductCard
 import com.njpg.loomcore.viewmodel.MaterialsViewModel
 import com.njpg.loomcore.viewmodel.ProductsViewModel
 
+/**
+ * Вкладка "Изделия" — каталог шаблонов изделий с CRUD-операциями.
+ *
+ * @param vm          ViewModel изделий.
+ * @param materialsVm ViewModel материалов — для выбора в редакторе изделия.
+ */
 @Composable
 fun ProductsTab(
     vm: ProductsViewModel, materialsVm: MaterialsViewModel
@@ -29,15 +35,10 @@ fun ProductsTab(
     }
 
     if (showDialog) {
-        ProductDialog(
-            initial = editTarget,
-            nextId = vm.nextId(),
-            allMaterials = materials,
-            onConfirm = { product ->
-                if (editTarget == null) vm.add(product) else vm.update(product)
-                closeDialog()
-            },
-            onDismiss = { closeDialog() })
+        ProductDialog(initial = editTarget, nextId = vm.nextId(), allMaterials = materials, onConfirm = { product ->
+            if (editTarget == null) vm.add(product) else vm.update(product)
+            closeDialog()
+        }, onDismiss = { closeDialog() })
     }
 
     itemToDelete?.let { product ->

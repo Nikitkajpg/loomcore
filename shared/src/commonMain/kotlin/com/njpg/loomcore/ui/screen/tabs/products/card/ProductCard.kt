@@ -20,6 +20,18 @@ import com.njpg.loomcore.data.ImageStorage
 import com.njpg.loomcore.model.Material
 import com.njpg.loomcore.model.Product
 
+/**
+ * Карточка изделия в списке раздела "Изделия".
+ *
+ * Поддерживает два состояния через [isExpanded]:
+ * - **Свёрнутое** — миниатюра фото 64×64, название, кнопки редактирования/удаления.
+ * - **Развёрнутое** — добавляет [ExtendedCardPart] с деталями и галереей.
+ *
+ * @param product      Отображаемое изделие.
+ * @param allMaterials Список материалов — передаётся в [ExtendedCardPart] для имён.
+ * @param onEdit       Открывает [ProductDialog] для редактирования.
+ * @param onDelete     Открывает [ConfirmDeleteDialog] для удаления.
+ */
 @Composable
 fun ProductCard(product: Product, allMaterials: List<Material>, onEdit: () -> Unit, onDelete: () -> Unit) {
     var isExpanded by remember { mutableStateOf(false) }
